@@ -1,0 +1,2 @@
+module Table::OrdersHelper
+end
