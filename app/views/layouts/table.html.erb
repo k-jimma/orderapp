@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>テーブル注文</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="theme-table">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">Table Order</div>
+        <div class="nav-links">
+          <%= link_to "メニュー", table_items_path(token: params[:token]), class: "btn btn-ghost" %>
+          <%= link_to "注文状況", table_order_path(token: params[:token]), class: "btn btn-primary" %>
+        </div>
+      </div>
+    </header>
+    <main class="app-shell">
+      <% flash.each do |key, value| %>
+        <div class="flash <%= key %>"><%= value %></div>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

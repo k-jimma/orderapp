@@ -1,0 +1,9 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">カテゴリを追加</h2>
+    <%= render "form", category: @category %>
+    <div class="footer-actions">
+      <%= link_to "戻る", admin_categories_path, class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>

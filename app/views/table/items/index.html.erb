@@ -1,0 +1,37 @@
+<div class="app-shell stack-md">
+  <div class="hero">
+    <h2 class="section-title">メニュー</h2>
+    <p class="muted">カテゴリからお選びください</p>
+  </div>
+
+  <div class="grid grid-2">
+    <% @categories.each do |category| %>
+      <section class="card stack-sm">
+        <h3 class="section-title"><%= category.name %></h3>
+        <div class="stack-md">
+          <% category.items.each do |item| %>
+            <div class="surface" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <div>
+                <div><strong><%= item.name %></strong></div>
+                <div class="muted"><%= number_to_currency(item.price, unit: "¥", precision: 0) %></div>
+              </div>
+              <% if item.is_available? %>
+                <%= form_with url: table_order_items_path(token: params[:token]), method: :post, local: true, class: "list-inline" do |f| %>
+                  <%= hidden_field_tag "order_item[item_id]", item.id %>
+                  <%= number_field_tag "order_item[quantity]", 1, min: 1, style: "width:4.5rem;" %>
+                  <%= f.submit "追加", class: "btn btn-primary" %>
+                <% end %>
+              <% else %>
+                <span class="badge">売切れ</span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+
+  <div class="footer-actions">
+    <%= link_to "注文状況を見る", table_order_path(token: params[:token]), class: "btn btn-ghost" %>
+  </div>
+</div>

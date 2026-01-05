@@ -1,0 +1,32 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">呼び出し一覧</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>テーブル</th>
+          <th>種別</th>
+          <th>メッセージ</th>
+          <th>ステータス</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @calls.each do |call| %>
+          <tr>
+            <td><%= call.table.number %></td>
+            <td><%= call.kind %></td>
+            <td><%= call.message %></td>
+            <td><%= call.status %></td>
+            <td>
+              <%= form_with url: staff_call_path(call), method: :patch, local: true, class: "list-inline" do |f| %>
+                <%= f.select :status, Call.statuses.keys, {}, { name: "call[status]" } %>
+                <%= f.submit "更新", class: "btn btn-primary" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

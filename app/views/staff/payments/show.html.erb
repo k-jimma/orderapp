@@ -1,0 +1,47 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">会計完了</h2>
+    <div class="grid grid-2">
+      <div class="surface stack-sm">
+        <p class="muted">支払額</p>
+        <strong><%= number_to_currency(@payment.amount, unit: "¥", precision: 0) %></strong>
+      </div>
+      <div class="surface stack-sm">
+        <p class="muted">受領</p>
+        <strong><%= @payment.received_cash %></strong>
+      </div>
+      <div class="surface stack-sm">
+        <p class="muted">割引</p>
+        <span><%= @payment.discount_amount %></span>
+      </div>
+      <div class="surface stack-sm">
+        <p class="muted">端数調整</p>
+        <span><%= @payment.rounding_adjustment %></span>
+      </div>
+      <div class="surface stack-sm">
+        <p class="muted">釣銭</p>
+        <span><%= @payment.change %></span>
+      </div>
+      <div class="surface stack-sm">
+        <p class="muted">支払い方法</p>
+        <span><%= @payment.payment_method %></span>
+      </div>
+    </div>
+
+    <div class="surface stack-sm">
+      <p class="muted">メモ</p>
+      <p><%= @payment.note %></p>
+    </div>
+
+    <h3 class="section-title">対象注文</h3>
+    <ul class="stack-sm" style="padding-left:16px;">
+      <% @payment.orders.each do |o| %>
+        <li>注文<%= o.id %> (テーブル<%= o.table.number %>)</li>
+      <% end %>
+    </ul>
+
+    <div class="footer-actions">
+      <%= link_to "注文一覧へ", staff_orders_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>

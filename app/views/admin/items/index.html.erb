@@ -1,0 +1,36 @@
+<div class="app-shell stack-md">
+  <div class="footer-actions">
+    <%= link_to "新規作成", new_admin_item_path, class: "btn btn-primary" %>
+  </div>
+
+  <div class="card stack-sm">
+    <h2 class="section-title">商品一覧</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>価格</th>
+          <th>カテゴリ</th>
+          <th>販売</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item.id %></td>
+            <td><%= item.name %></td>
+            <td><%= item.price %></td>
+            <td><%= item.category&.name %></td>
+            <td><%= item.is_available? ? "販売中" : "停止" %></td>
+            <td class="list-inline">
+              <%= link_to "編集", edit_admin_item_path(item), class: "btn btn-ghost" %>
+              <%= button_to "削除", admin_item_path(item), method: :delete, data: { confirm: "削除しますか？" }, class: "btn btn-primary" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

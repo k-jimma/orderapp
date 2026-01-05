@@ -1,0 +1,10 @@
+<div class="app-shell stack-md" style="max-width: 560px;">
+  <div class="card stack-sm">
+    <h2 class="section-title">注文を受け付けました</h2>
+    <p class="muted">ご注文ありがとうございます。提供状況は以下から確認できます。</p>
+    <div class="footer-actions">
+      <%= link_to "注文状況を見る", table_order_path(token: params[:token]), class: "btn btn-primary" %>
+      <%= link_to "メニューに戻る", table_items_path(token: params[:token]), class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>

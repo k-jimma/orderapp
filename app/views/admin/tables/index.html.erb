@@ -1,0 +1,45 @@
+<div class="app-shell stack-md">
+  <div class="footer-actions">
+    <%= button_to "全テーブルのPINを更新", generate_pin_bulk_admin_tables_path, method: :post, class: "btn btn-primary" %>
+  </div>
+
+  <div class="card stack-sm">
+    <h2 class="section-title">テーブル一覧</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>番号</th>
+          <th>token</th>
+          <th>mode</th>
+          <th>active</th>
+          <th>expires_at</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tables.each do |table| %>
+          <tr>
+            <td><%= table.number %></td>
+            <td><%= table.token %></td>
+            <td><%= table.access_mode %></td>
+            <td><%= table.active? ? "ON" : "OFF" %></td>
+            <td><%= table.token_expires_at %></td>
+            <td>
+              <%= form_with url: admin_table_path(table), method: :patch, local: true, class: "stack-sm" do |f| %>
+                <div class="list-inline">
+                  <%= f.select :access_mode, Table.access_modes.keys %>
+                  <label class="list-inline" style="align-items:center;">
+                    <%= f.check_box :active %> 有効
+                  </label>
+                </div>
+                <%= f.datetime_field :token_expires_at %>
+                <%= f.submit "更新", class: "btn btn-primary" %>
+              <% end %>
+              <%= button_to "PIN再発行", generate_pin_admin_table_path(table), method: :post, class: "btn btn-ghost" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

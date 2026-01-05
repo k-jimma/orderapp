@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>スタッフ</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="theme-staff">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">Staff Console</div>
+        <div class="nav-links">
+          <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
+          <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
+          <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
+          <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
+        </div>
+      </div>
+    </header>
+    <main class="app-shell">
+      <% flash.each do |key, value| %>
+        <div class="flash <%= key %>"><%= value %></div>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>
