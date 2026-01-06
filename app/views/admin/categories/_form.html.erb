@@ -14,5 +14,10 @@
     <%= f.text_field :name %>
   </div>
 
+  <div>
+    <%= f.label :parent_id, "親カテゴリ" %>
+    <%= f.select :parent_id, @parent_options, { include_blank: "なし" } %>
+  </div>
+
   <%= f.submit "保存", class: "btn btn-primary" %>
 <% end %>

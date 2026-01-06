@@ -1,9 +1,10 @@
 module Admin
   class CategoriesController < BaseController
-    before_action :set_category, only: [ :edit, :update, :destroy ]
+    before_action :set_category, only: [:edit, :update, :destroy]
+    before_action :load_parent_options, only: [:new, :edit, :create, :update]
 
     def index
-      @categories = Category.order(:id)
+      @categories = Category.where(parent_id: nil).includes(:children).order(:name)
     end
 
     def new
@@ -44,7 +45,11 @@ module Admin
     end
 
     def category_params
-      params.require(:category).permit(:name)
+      params.require(:category).permit(:name, :parent_id)
+    end
+
+    def load_parent_options
+      @parent_options = Category.parent_options(except: @category)
     end
   end
 end

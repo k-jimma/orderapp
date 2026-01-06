@@ -13,7 +13,9 @@ module TableTokenAuth
     @current_table = Table.find_by(token: token)
     return render(status: :not_found, plain: "Table not found") if @current_table.nil?
 
-    if @current_table.token_expires_at.present? && @current_table.token_expires_at < Time.current
+    if AppSetting.instance.token_expiry_enabled? &&
+        @current_table.token_expires_at.present? &&
+        @current_table.token_expires_at < Time.current
       return render(status: :forbidden, plain: "Token expired")
     end
 

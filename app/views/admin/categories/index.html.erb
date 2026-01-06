@@ -5,16 +5,8 @@
 
   <div class="card stack-sm">
     <h2 class="section-title">カテゴリ一覧</h2>
-    <ul class="stack-sm" style="padding-left:16px;">
-      <% @categories.each do |category| %>
-        <li class="surface" style="display:flex; justify-content:space-between; align-items:center;">
-          <div><%= category.name %></div>
-          <div class="list-inline">
-            <%= link_to "編集", edit_admin_category_path(category), class: "btn btn-ghost" %>
-            <%= button_to "削除", admin_category_path(category), method: :delete, data: { confirm: "削除しますか？" }, class: "btn btn-primary" %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
+    <div class="stack-sm">
+      <%= render partial: "category_node", collection: @categories, as: :category, locals: { level: 0 } %>
+    </div>
   </div>
 </div>

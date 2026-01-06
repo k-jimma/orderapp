@@ -1,0 +1,31 @@
+<div class="app-shell stack-md" style="max-width: 720px;">
+  <div class="card stack-md">
+    <h2 class="section-title">運用設定</h2>
+    <%= form_with model: @settings, url: admin_settings_path, method: :patch, local: true, class: "stack-md" do |f| %>
+      <label class="list-inline" style="align-items:center;">
+        <%= f.check_box :token_expiry_enabled %>
+        <span>トークン有効期限を有効化する</span>
+      </label>
+
+      <div class="grid grid-2">
+        <div>
+          <%= f.label :global_access_mode, "PIN運用ポリシー" %>
+          <%= f.select :global_access_mode,
+            [["テーブルごとに設定", nil],
+             ["全テーブル PIN必須", "pin_required"],
+             ["全テーブル PIN不要", "open_access"]] %>
+        </div>
+        <div>
+          <%= f.label :default_access_mode, "テーブル作成時の既定値" %>
+          <%= f.select :default_access_mode,
+            [["PIN必須", "pin_required"], ["PIN不要", "open_access"]] %>
+          <p class="muted">PIN運用ポリシーが「テーブルごと」の場合のみ使用します。</p>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <%= f.submit "保存", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

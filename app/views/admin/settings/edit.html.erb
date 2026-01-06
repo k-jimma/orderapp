@@ -1,0 +1,28 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">運用設定</h2>
+    <%= form_with model: [:admin, @settings], url: admin_settings_path, method: :patch, local: true, class: "stack-md" do |f| %>
+      <label class="list-inline" style="align-items:center;">
+        <%= f.check_box :token_expiry_enabled %>
+        <span>トークン有効期限を使う</span>
+      </label>
+
+      <div>
+        <%= f.label :default_access_mode, "新規テーブルのデフォルト" %>
+        <%= f.select :default_access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+      </div>
+
+      <div>
+        <%= f.label :global_access_mode, "全体のアクセス方式（任意）" %>
+        <%= f.select :global_access_mode,
+          [["テーブルごとに設定", nil]] + Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+        <p class="muted">設定すると、各テーブルのアクセス方式は固定されます。</p>
+      </div>
+
+      <div class="footer-actions">
+        <%= f.submit "保存", class: "btn btn-primary" %>
+        <%= link_to "テーブル管理へ", admin_tables_path, class: "btn btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -7,7 +7,7 @@ module Table
     def new; end
 
     def create
-      if current_table.open_access?
+      if AppSetting.instance.open_access_for?(current_table)
         grant_table_access!
         return redirect_to table_items_path(token: current_table.token)
       end

@@ -34,11 +34,14 @@ Rails.application.routes.draw do
   namespace :admin do
     get "/" => "dashboard#index", as: :root
 
+    resource :settings, only: [:edit, :update]
+
     resources :items
     resources :categories
-    resources :tables, only: [:index, :update] do
+    resources :tables, only: [:index, :create, :update] do
       post :generate_pin, on: :member
       post :generate_pin_bulk, on: :collection
+      patch :activate_all, on: :collection
     end
   end
 

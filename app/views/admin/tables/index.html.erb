@@ -1,6 +1,58 @@
 <div class="app-shell stack-md">
-  <div class="footer-actions">
-    <%= button_to "全テーブルのPINを更新", generate_pin_bulk_admin_tables_path, method: :post, class: "btn btn-primary" %>
+  <div class="card stack-md">
+    <div class="grid grid-2">
+      <div class="surface stack-sm">
+        <h3 class="section-title">共通PINの設定</h3>
+        <p class="muted">全テーブル同じPINを設定します。未入力ならランダム4桁を自動生成します。</p>
+        <%= form_with url: generate_pin_bulk_admin_tables_path, method: :post, local: true, class: "grid grid-2" do |f| %>
+          <div>
+            <%= label_tag :pin, "共通PIN" %>
+            <%= text_field_tag :pin, nil, placeholder: "例: 1234" %>
+          </div>
+          <div class="footer-actions">
+            <%= f.submit "全テーブルに適用", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+      <div class="surface stack-sm">
+        <h3 class="section-title">一括有効化</h3>
+        <p class="muted">全テーブルを一括で有効にします。</p>
+        <%= button_to "全テーブルを有効化", activate_all_admin_tables_path, method: :patch, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">テーブル作成</h3>
+    <%= form_with model: [:admin, @table], url: admin_tables_path, method: :post, local: true, class: "grid grid-2" do |f| %>
+      <div>
+        <%= f.label :number, "テーブル番号" %>
+        <%= f.number_field :number %>
+      </div>
+      <% if @settings.global_access_mode.present? %>
+        <div>
+          <%= f.label :access_mode, "アクセス方式" %>
+          <div class="surface"><%= I18n.t("enums.table.access_mode.#{@settings.global_access_mode}") %></div>
+        </div>
+      <% else %>
+        <div>
+          <%= f.label :access_mode, "アクセス方式" %>
+          <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+        </div>
+      <% end %>
+      <label class="list-inline" style="align-items:center;">
+        <%= f.check_box :active %> 有効
+      </label>
+      <% if @settings.token_expiry_enabled? %>
+        <div>
+          <%= f.label :token_expires_at, "トークン有効期限" %>
+          <%= f.datetime_field :token_expires_at %>
+        </div>
+      <% end %>
+      <div class="footer-actions">
+        <%= f.submit "作成", class: "btn btn-primary" %>
+      </div>
+    <% end %>
   </div>
 
   <div class="card stack-sm">
@@ -9,10 +61,11 @@
       <thead>
         <tr>
           <th>番号</th>
-          <th>token</th>
-          <th>mode</th>
-          <th>active</th>
-          <th>expires_at</th>
+          <th>PIN設定</th>
+          <th>有効</th>
+          <% if @settings.token_expiry_enabled? %>
+            <th>トークン有効期限</th>
+          <% end %>
           <th>操作</th>
         </tr>
       </thead>
@@ -20,22 +73,33 @@
         <% @tables.each do |table| %>
           <tr>
             <td><%= table.number %></td>
-            <td><%= table.token %></td>
-            <td><%= table.access_mode %></td>
+            <td>
+              <%= I18n.t("enums.table.access_mode.#{@settings.access_mode_for(table)}") %>
+              <% if @settings.global_access_mode.present? %>
+                <span class="badge">全体設定</span>
+              <% end %>
+            </td>
             <td><%= table.active? ? "ON" : "OFF" %></td>
-            <td><%= table.token_expires_at %></td>
+            <% if @settings.token_expiry_enabled? %>
+              <td><%= table.token_expires_at %></td>
+            <% end %>
             <td>
               <%= form_with url: admin_table_path(table), method: :patch, local: true, class: "stack-sm" do |f| %>
-                <div class="list-inline">
-                  <%= f.select :access_mode, Table.access_modes.keys %>
-                  <label class="list-inline" style="align-items:center;">
-                    <%= f.check_box :active %> 有効
-                  </label>
-                </div>
-                <%= f.datetime_field :token_expires_at %>
+                <% if @settings.global_access_mode.present? %>
+                  <div class="surface"><%= I18n.t("enums.table.access_mode.#{@settings.global_access_mode}") %></div>
+                <% else %>
+                  <div class="list-inline">
+                    <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] }, {}, {} %>
+                  </div>
+                <% end %>
+                <label class="list-inline" style="align-items:center;">
+                  <%= f.check_box :active %> 有効
+                </label>
+                <% if @settings.token_expiry_enabled? %>
+                  <%= f.datetime_field :token_expires_at %>
+                <% end %>
                 <%= f.submit "更新", class: "btn btn-primary" %>
               <% end %>
-              <%= button_to "PIN再発行", generate_pin_admin_table_path(table), method: :post, class: "btn btn-ghost" %>
             </td>
           </tr>
         <% end %>
