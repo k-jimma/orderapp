@@ -40,8 +40,8 @@ module Payments
         end
 
         table = orders.first.table
-        table.update!(active: false)
-        table.rotate_token!
+
+        table.update!(pin_rotated_at: Time.current)
 
         payment
       end

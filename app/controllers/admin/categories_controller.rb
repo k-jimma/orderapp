@@ -1,7 +1,7 @@
 module Admin
   class CategoriesController < BaseController
-    before_action :set_category, only: [:edit, :update, :destroy]
-    before_action :load_parent_options, only: [:new, :edit, :create, :update]
+    before_action :set_category, only: [ :edit, :update, :destroy ]
+    before_action :load_parent_options, only: [ :new, :edit, :create, :update ]
 
     def index
       @categories = Category.where(parent_id: nil).includes(:children).order(:sort_order, :name)

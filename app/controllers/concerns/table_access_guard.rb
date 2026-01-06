@@ -15,12 +15,28 @@ module TableAccessGuard
   end
 
   def table_access_granted?
-    session.dig(:table_access, current_table.id.to_s) == true
+    stored = session.dig(:table_access, current_table.id.to_s)
+    return false if stored.blank?
+
+    granted_at =
+      case stored
+      when Hash
+        stored["pin_rotated_at"] || stored[:pin_rotated_at]
+      else
+        nil
+      end
+
+    table_rotated_at = current_table.pin_rotated_at&.to_i
+    granted_at_i = granted_at.to_i
+
+    granted_at_i == (table_rotated_at || 0)
   end
 
   def grant_table_access!
     session[:table_access] ||= {}
-    session[:table_access][current_table.id.to_s] = true
+    session[:table_access][current_table.id.to_s] = {
+      pin_rotated_at: (current_table.pin_rotated_at&.to_i || 0)
+    }
   end
 
   def revoke_table_access!
