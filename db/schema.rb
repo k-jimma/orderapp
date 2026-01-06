@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_04_121000) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_04_122000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -39,8 +39,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_04_121000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "parent_id"
+    t.integer "sort_order", default: 0, null: false
     t.index ["parent_id", "name"], name: "index_categories_on_parent_id_and_name", unique: true
     t.index ["parent_id"], name: "index_categories_on_parent_id"
+    t.index ["sort_order"], name: "index_categories_on_sort_order"
   end
 
   create_table "items", force: :cascade do |t|

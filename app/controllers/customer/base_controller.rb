@@ -1,4 +1,4 @@
-module Table
+module Customer
   class BaseController < ApplicationController
     include TableTokenAuth
 

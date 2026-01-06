@@ -27,13 +27,13 @@
           <tr>
             <td><%= oi.item.name %></td>
             <td><%= oi.quantity %></td>
-            <td><%= number_to_currency(oi.unit_price, unit: "¥", precision: 0) %></td>
+            <td><%= number_to_currency(oi.unit_price, unit: "¥", precision: 0, format: "%u%n") %></td>
             <td><span class="pill status-<%= oi.status %>"><%= oi.status %></span></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <p>小計: <strong><%= number_to_currency(@order.subtotal, unit: "¥", precision: 0) %></strong></p>
+    <p>小計: <strong><%= number_to_currency(@order.subtotal, unit: "¥", precision: 0, format: "%u%n") %></strong></p>
   </div>
 
   <div class="card stack-sm">

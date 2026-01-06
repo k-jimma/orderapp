@@ -6,7 +6,7 @@
         <p class="muted">対象注文</p>
         <ul class="stack-sm" style="padding-left: 16px;">
           <% @orders.each do |o| %>
-            <li>注文<%= o.id %> (Table <%= o.table.number %>) 小計: <%= number_to_currency(o.subtotal, unit: "¥", precision: 0) %></li>
+          <li>注文<%= o.id %> (Table <%= o.table.number %>) 小計: <%= number_to_currency(o.subtotal, unit: "¥", precision: 0, format: "%u%n") %></li>
           <% end %>
         </ul>
       </div>

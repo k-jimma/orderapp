@@ -11,7 +11,7 @@ module TableAccessGuard
     return if AppSetting.instance.open_access_for?(current_table)
     return if table_access_granted?
 
-    redirect_to table_access_new_path(token: current_table.token), alert: "PINの入力が必要です"
+    redirect_to new_table_access_path(token: current_table.token), alert: "PINの入力が必要です"
   end
 
   def table_access_granted?

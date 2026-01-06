@@ -4,7 +4,7 @@
     <div class="grid grid-2">
       <div class="surface stack-sm">
         <p class="muted">支払額</p>
-        <strong><%= number_to_currency(@payment.amount, unit: "¥", precision: 0) %></strong>
+        <strong><%= number_to_currency(@payment.amount, unit: "¥", precision: 0, format: "%u%n") %></strong>
       </div>
       <div class="surface stack-sm">
         <p class="muted">受領</p>

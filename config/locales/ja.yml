@@ -38,6 +38,7 @@ ja:
       category:
         name: "カテゴリ名"
         parent_id: "親カテゴリ"
+        sort_order: "並び順"
       order:
         status: "ステータス"
         people_count: "人数"

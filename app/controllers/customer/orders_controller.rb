@@ -1,4 +1,4 @@
-module Table
+module Customer
   class OrdersController < BaseController
     include TableAccessGuard
 

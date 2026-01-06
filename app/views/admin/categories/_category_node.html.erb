@@ -1,12 +1,13 @@
 <div class="surface" style="display:flex; justify-content:space-between; align-items:center; margin-left:<%= level * 16 %>px;">
   <div>
     <%= category.name %>
+    <span class="muted">(#<%= category.sort_order %>)</span>
   </div>
   <div class="list-inline">
     <%= link_to "編集", edit_admin_category_path(category), class: "btn btn-ghost" %>
     <%= button_to "削除", admin_category_path(category), method: :delete, data: { confirm: "削除しますか？" }, class: "btn btn-primary" %>
   </div>
 </div>
-<% category.children.order(:name).each do |child| %>
+<% category.children.order(:sort_order, :name).each do |child| %>
   <%= render partial: "category_node", locals: { category: child, level: level + 1 } %>
 <% end %>

@@ -4,7 +4,7 @@ module Admin
     before_action :load_parent_options, only: [:new, :edit, :create, :update]
 
     def index
-      @categories = Category.where(parent_id: nil).includes(:children).order(:name)
+      @categories = Category.where(parent_id: nil).includes(:children).order(:sort_order, :name)
     end
 
     def new
@@ -45,7 +45,7 @@ module Admin
     end
 
     def category_params
-      params.require(:category).permit(:name, :parent_id)
+      params.require(:category).permit(:name, :parent_id, :sort_order)
     end
 
     def load_parent_options

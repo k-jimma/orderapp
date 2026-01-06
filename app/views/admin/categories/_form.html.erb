@@ -15,6 +15,11 @@
   </div>
 
   <div>
+    <%= f.label :sort_order, "並び順" %>
+    <%= f.number_field :sort_order, min: 0 %>
+  </div>
+
+  <div>
     <%= f.label :parent_id, "親カテゴリ" %>
     <%= f.select :parent_id, @parent_options, { include_blank: "なし" } %>
   </div>
