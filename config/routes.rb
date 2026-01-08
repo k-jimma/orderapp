@@ -13,6 +13,14 @@ Rails.application.routes.draw do
     resource :table_status, only: [], controller: :table_statuses do
       patch :activate
     end
+
+    resource :cart, only: [ :show ], controller: :carts do
+      post :add
+      patch :update_item
+      delete :remove_item
+      post :checkout
+      delete :clear
+    end
   end
 
   namespace :staff do

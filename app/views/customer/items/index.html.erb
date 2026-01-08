@@ -28,11 +28,26 @@
                     <div class="muted"><%= number_to_currency(item.price, unit: "¥", precision: 0, format: "%u%n") %></div>
                   </div>
                   <% if item.is_available? %>
-                    <%= form_with url: table_order_order_items_path(token: params[:token]), method: :post, local: true, class: "list-inline" do |f| %>
-                      <%= hidden_field_tag "order_item[item_id]", item.id %>
-                      <%= number_field_tag "order_item[quantity]", 1, min: 1, style: "width:4.5rem;" %>
-                      <%= f.submit "追加", class: "btn btn-primary" %>
-                    <% end %>
+                    <div id="menu_qty_<%= item.id %>">
+                      <%= form_with url: add_table_cart_path(token: params[:token], staff: params[:staff]),
+                                    method: :post,
+                                    local: false,
+                                    data: { turbo: true },
+                                    class: "list-inline" do %>
+
+                        <%= hidden_field_tag :item_id, item.id %>
+
+                        <div class="qty-stepper" data-controller="qty" data-qty-min-value="1">
+                          <button type="button" class="qty-btn" data-action="qty#dec" aria-label="数量を減らす">−</button>
+                          <span class="qty-value" data-qty-target="label">1</span>
+                          <button type="button" class="qty-btn" data-action="qty#inc" aria-label="数量を増やす">＋</button>
+
+                          <%= hidden_field_tag :quantity, 1, data: { qty_target: "input" } %>
+                        </div>
+
+                        <%= submit_tag "カートに追加", class: "btn btn-primary" %>
+                      <% end %>
+                    </div>
                   <% else %>
                     <span class="badge">売切れ</span>
                   <% end %>
@@ -53,11 +68,26 @@
                         <div class="muted"><%= number_to_currency(item.price, unit: "¥", precision: 0, format: "%u%n") %></div>
                       </div>
                       <% if item.is_available? %>
-                        <%= form_with url: table_order_order_items_path(token: params[:token]), method: :post, local: true, class: "list-inline" do |f| %>
-                          <%= hidden_field_tag "order_item[item_id]", item.id %>
-                          <%= number_field_tag "order_item[quantity]", 1, min: 1, style: "width:4.5rem;" %>
-                          <%= f.submit "追加", class: "btn btn-primary" %>
-                        <% end %>
+                        <div id="menu_qty_<%= item.id %>">
+                          <%= form_with url: add_table_cart_path(token: params[:token], staff: params[:staff]),
+                                        method: :post,
+                                        local: false,
+                                        data: { turbo: true },
+                                        class: "list-inline" do %>
+
+                            <%= hidden_field_tag :item_id, item.id %>
+
+                            <div class="qty-stepper" data-controller="qty" data-qty-min-value="1">
+                              <button type="button" class="qty-btn" data-action="qty#dec" aria-label="数量を減らす">−</button>
+                              <span class="qty-value" data-qty-target="label">1</span>
+                              <button type="button" class="qty-btn" data-action="qty#inc" aria-label="数量を増やす">＋</button>
+
+                              <%= hidden_field_tag :quantity, 1, data: { qty_target: "input" } %>
+                            </div>
+
+                            <%= submit_tag "カートに追加", class: "btn btn-primary" %>
+                          <% end %>
+                        </div>
                       <% else %>
                         <span class="badge">売切れ</span>
                       <% end %>
@@ -79,6 +109,7 @@
   </div>
 
   <div class="footer-actions">
-    <%= link_to "注文状況を見る", table_order_path(token: params[:token]), class: "btn btn-ghost" %>
+    <%= link_to "カートを見る", table_cart_path(token: params[:token], staff: params[:staff]), class: "btn btn-primary" %>
+    <%= link_to "注文状況を見る", table_order_path(token: params[:token], staff: params[:staff]), class: "btn btn-ghost" %>
   </div>
 </div>
