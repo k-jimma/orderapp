@@ -14,6 +14,8 @@ Rails.application.routes.draw do
   namespace :staff do
     get "/" => "dashboard#index", as: :root
 
+    resource :password, only: [ :edit, :update ]
+
     resources :orders, only: [ :index, :show ] do
       post :start_billing, on: :member
 
@@ -43,6 +45,8 @@ Rails.application.routes.draw do
       post :generate_pin_bulk, on: :collection
       patch :activate_all, on: :collection
     end
+
+    resources :staffs, only: [ :index, :new, :create, :destroy ]
   end
 
   devise_for :users, skip: [ :registrations ], controllers: { sessions: "users/sessions" }

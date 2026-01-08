@@ -1,0 +1,23 @@
+<div class="app-shell stack-md" style="max-width: 720px;">
+  <div class="card stack-sm">
+    <h2 class="section-title">初回パスワード変更</h2>
+    <p class="muted">初回ログイン時はパスワード変更が必要です。</p>
+
+    <%= form_with model: current_user, url: staff_password_path, method: :patch, local: true, class: "stack-md" do |f| %>
+      <div class="grid grid-2">
+        <div>
+          <%= f.label :password, "新しいパスワード" %>
+          <%= f.password_field :password, autocomplete: "new-password" %>
+        </div>
+        <div>
+          <%= f.label :password_confirmation, "新しいパスワード（確認）" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <%= f.submit "変更する", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,7 +1,11 @@
 <div class="app-shell">
   <div class="card stack-md" style="max-width: 440px; margin: 40px auto;">
     <h2 class="section-title">ログイン</h2>
-    <%= form_with model: resource, url: session_path(resource_name), local: true do |f| %>
+
+    <%= form_with model: resource,
+          url: session_path(resource_name),
+          data: { turbo: false },
+          local: true do |f| %>
       <div class="stack-sm">
         <%= f.label :email %>
         <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
@@ -21,9 +25,16 @@
 
       <div class="footer-actions">
         <%= f.submit "ログイン", class: "btn btn-primary" %>
-        <%= button_to "ゲストログイン（スタッフ）", guest_user_session_path, method: :post, class: "btn btn-ghost" %>
       </div>
     <% end %>
+
+    <div class="footer-actions">
+      <%= button_to "ゲストログイン（スタッフ権限）",
+            guest_user_session_path,
+            method: :post,
+            class: "btn btn-ghost",
+            form: { data: { turbo: false } } %>
+    </div>
 
     <div class="muted">
       <%= render "devise/shared/links" %>
