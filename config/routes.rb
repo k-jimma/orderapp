@@ -9,6 +9,10 @@ Rails.application.routes.draw do
     end
 
     resources :calls, only: [ :create ]
+
+    resource :table_status, only: [], controller: :table_statuses do
+      patch :activate
+    end
   end
 
   namespace :staff do

@@ -12,7 +12,13 @@ module Staff
 
     def start_billing
       order = Order.find(params[:id])
-      order.start_billing!
+      ActiveRecord::Base.transaction do
+        order.update!(status: :billing)
+
+        table = order.table
+        table.update!(active: false)
+      end
+
       redirect_to staff_order_path(order), notice: "会計を開始しました"
     rescue StandardError => e
       redirect_to staff_order_path(order), alert: e.message

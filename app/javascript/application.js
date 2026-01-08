@@ -27,7 +27,10 @@ document.addEventListener("turbo:load", () => {
     if (!switcher) return
     const token = switcher.value
     if (!token) return
-    window.location.href = `/t/${token}/items`
+
+    const isStaff = document.body?.dataset?.role === "staff"
+    const qs = isStaff ? "?staff=1" : ""
+    window.location.href = `/t/${token}/items${qs}`
   }
   if (switcher) switcher.addEventListener("change", goToTable)
   if (switcherButton) switcherButton.addEventListener("click", goToTable)

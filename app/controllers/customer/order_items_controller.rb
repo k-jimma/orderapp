@@ -1,5 +1,7 @@
 module Customer
   class OrderItemsController < BaseController
+    before_action :deny_when_table_inactive!, only: [ :create ]
+    before_action :set_table
     include TableAccessGuard
 
     def index
@@ -27,6 +29,15 @@ module Customer
 
     def order_item_params
       params.require(:order_item).permit(:item_id, :quantity, :note)
+    end
+
+    def deny_when_table_inactive!
+      return if @table&.active?
+      render "customer/shared/table_billing", status: :locked
+    end
+
+    def set_table
+      @table = Table.find_by!(token: params[:token])
     end
   end
 end
