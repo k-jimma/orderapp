@@ -81,6 +81,28 @@ document.addEventListener("turbo:load", () => {
     })
   }
 
+  // Admin order history table filters
+  const tableFilterAll = document.querySelector("[data-table-filter-all]")
+  const tableFilterItems = document.querySelectorAll("[data-table-filter-item]")
+
+  if (tableFilterAll && tableFilterItems.length > 0 && !tableFilterAll.dataset.bound) {
+    tableFilterAll.dataset.bound = "true"
+    tableFilterAll.addEventListener("change", () => {
+      tableFilterItems.forEach((el) => {
+        el.checked = tableFilterAll.checked
+      })
+    })
+
+    tableFilterItems.forEach((el) => {
+      if (el.dataset.bound) return
+      el.dataset.bound = "true"
+      el.addEventListener("change", () => {
+        const allChecked = Array.from(tableFilterItems).every((item) => item.checked)
+        tableFilterAll.checked = allChecked
+      })
+    })
+  }
+
   // ---- Admin Staff password helper ----
   const pw = document.getElementById("staff-password")
   const pwc = document.getElementById("staff-password-confirm")
@@ -165,9 +187,112 @@ document.addEventListener("turbo:load", () => {
   }
 })
 
+function setupConfirmModal() {
+  if (!window.Turbo) return
+  if (window.__confirmModalBound) return
+  window.__confirmModalBound = true
+
+  const modal = document.getElementById("confirm-modal")
+  const message = document.getElementById("confirm-modal-message")
+  const ok = modal?.querySelector("[data-confirm-ok]")
+  const cancels = modal?.querySelectorAll("[data-confirm-cancel]") || []
+
+  if (!modal || !message || !ok) return
+
+  const openModal = (text) =>
+    new Promise((resolve) => {
+      message.textContent = text
+      modal.hidden = false
+      modal.setAttribute("aria-hidden", "false")
+
+      const close = (result) => {
+        modal.hidden = true
+        modal.setAttribute("aria-hidden", "true")
+        ok.removeEventListener("click", onOk)
+        cancels.forEach((el) => el.removeEventListener("click", onCancel))
+        resolve(result)
+      }
+
+      const onOk = () => close(true)
+      const onCancel = () => close(false)
+
+      ok.addEventListener("click", onOk)
+      cancels.forEach((el) => el.addEventListener("click", onCancel))
+    })
+
+  window.Turbo.setConfirmMethod((text) => openModal(text))
+
+  document.addEventListener(
+    "click",
+    (event) => {
+      const confirmEl = event.target?.closest?.("[data-turbo-confirm],[data-confirm]")
+      if (!confirmEl) return
+      if (confirmEl.dataset.confirmed === "true") return
+
+      event.preventDefault()
+      const text =
+        confirmEl.getAttribute("data-turbo-confirm") ||
+        confirmEl.getAttribute("data-confirm") ||
+        "確認しますか？"
+
+      const form = confirmEl.closest("form") || (confirmEl.tagName === "FORM" ? confirmEl : null)
+      const submitter = event.target?.closest?.("button, input[type=\"submit\"]")
+
+      openModal(text).then((ok) => {
+        if (!ok) return
+        confirmEl.dataset.confirmed = "true"
+        if (submitter) submitter.dataset.confirmed = "true"
+
+        const confirmEls = [confirmEl, submitter].filter(Boolean)
+        const removed = confirmEls.map((el) => ({
+          el,
+          turbo: el.getAttribute("data-turbo-confirm"),
+          confirm: el.getAttribute("data-confirm"),
+        }))
+        removed.forEach(({ el }) => {
+          el.removeAttribute("data-turbo-confirm")
+          el.removeAttribute("data-confirm")
+        })
+
+        if (form?.requestSubmit) {
+          form.requestSubmit(submitter || undefined)
+        } else if (form) {
+          form.submit()
+        } else {
+          confirmEl.click()
+        }
+
+        removed.forEach(({ el, turbo, confirm }) => {
+          if (turbo) el.setAttribute("data-turbo-confirm", turbo)
+          if (confirm) el.setAttribute("data-confirm", confirm)
+        })
+
+        setTimeout(() => {
+          delete confirmEl.dataset.confirmed
+          if (submitter) delete submitter.dataset.confirmed
+        }, 0)
+      })
+    },
+    true
+  )
+}
+
+document.addEventListener("turbo:load", () => {
+  setupConfirmModal()
+})
+
 // Turbo Frame の中身が差し替わったとき（flashがturbo_streamで更新されるケース）
 document.addEventListener("turbo:frame-load", (event) => {
   autoDismissFlashes(event.target)
+})
+
+// Turbo Stream で差し替えた直後にもフラッシュを自動消去
+document.addEventListener("turbo:before-stream-render", (event) => {
+  const originalRender = event.detail.render
+  event.detail.render = (stream) => {
+    originalRender(stream)
+    autoDismissFlashes()
+  }
 })
 
 function saveScrollForNextLoad(targetId = null) {

@@ -19,7 +19,7 @@ module Staff
     end
 
     def require_staff!
-      return if current_user&.admin? || current_user&.staff?
+      return if current_user&.admin? || current_user&.staff? || current_user&.chief?
       redirect_to root_path, alert: "権限がありません"
     end
 

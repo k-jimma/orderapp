@@ -13,6 +13,10 @@ class Table < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
 
+  def inactive?
+    !active?
+  end
+
   before_validation :ensure_token, on: :create
 
   def rotate_token!

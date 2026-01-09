@@ -15,7 +15,13 @@ module Admin
     private
 
     def settings_params
-      params.require(:app_setting).permit(:token_expiry_enabled, :default_access_mode, :global_access_mode)
+      permitted = [
+        :token_expiry_enabled,
+        :default_access_mode,
+        :global_access_mode
+      ]
+      permitted << :guest_logins_enabled if current_user&.chief?
+      params.require(:app_setting).permit(*permitted)
     end
   end
 end

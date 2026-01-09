@@ -18,6 +18,7 @@
           <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>
           <%= link_to "カテゴリ", admin_categories_path, class: "btn btn-ghost" %>
           <%= link_to "テーブル", admin_tables_path, class: "btn btn-ghost" %>
+          <%= link_to "注文管理", admin_order_histories_path, class: "btn btn-ghost" %>
           <%= link_to "スタッフ", admin_staffs_path, class: "btn btn-ghost" %>
           <%= link_to "設定", edit_admin_settings_path, class: "btn btn-ghost" %>
           <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost" %>
@@ -26,12 +27,9 @@
       </div>
     </header>
     <div class="toast-stack">
-      <%= turbo_frame_tag "flash" do %>
-        <% flash.each do |key, value| %>
-          <div class="flash <%= key %> toast"><%= value %></div>
-        <% end %>
-      <% end %>
+      <%= render "shared/flash" %>
     </div>
+    <%= render "shared/confirm_modal" %>
     <main class="app-shell">
       <%= yield %>
     </main>

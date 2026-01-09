@@ -1,0 +1,46 @@
+<tr id="<%= dom_id(table) %>">
+  <td><%= table.number %></td>
+  <td>
+    <%= I18n.t("enums.table.access_mode.#{settings.access_mode_for(table)}") %>
+    <% if settings.global_access_mode.present? %>
+      <span class="badge">全体設定</span>
+    <% end %>
+  </td>
+  <td>
+    <div class="list-inline">
+      <span><%= table.active? ? "ON" : "OFF" %></span>
+      <% if table.active? %>
+        <%= button_to "無効化", admin_table_path(table),
+              method: :patch,
+              params: { table: { active: false } },
+              class: "btn btn-ghost" %>
+      <% else %>
+        <%= button_to "有効化", admin_table_path(table),
+              method: :patch,
+              params: { table: { active: true } },
+              class: "btn btn-ghost" %>
+      <% end %>
+    </div>
+  </td>
+  <% if settings.token_expiry_enabled? %>
+    <td><%= table.token_expires_at %></td>
+  <% end %>
+  <td>
+    <%= form_with model: [:admin, table], url: admin_table_path(table), method: :patch, class: "stack-sm" do |f| %>
+      <% if settings.global_access_mode.present? %>
+        <div class="surface"><%= I18n.t("enums.table.access_mode.#{settings.global_access_mode}") %></div>
+      <% else %>
+        <div class="list-inline">
+          <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] }, {}, {} %>
+        </div>
+      <% end %>
+      <label class="list-inline" style="align-items:center;">
+        <%= f.check_box :active %> 有効
+      </label>
+      <% if settings.token_expiry_enabled? %>
+        <%= f.datetime_field :token_expires_at %>
+      <% end %>
+      <%= f.submit "更新", class: "btn btn-primary" %>
+    <% end %>
+  </td>
+</tr>

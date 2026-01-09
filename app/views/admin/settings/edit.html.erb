@@ -19,9 +19,19 @@
         <p class="muted">設定すると、各テーブルのアクセス方式は固定されます。</p>
       </div>
 
+      <% if current_user&.chief? %>
+        <label class="list-inline" style="align-items:center;">
+          <%= f.check_box :guest_logins_enabled %>
+          <span>ゲストログインボタンを表示する</span>
+        </label>
+      <% end %>
+
       <div class="footer-actions">
         <%= f.submit "保存", class: "btn btn-primary" %>
-        <%= link_to "テーブル管理へ", admin_tables_path, class: "btn btn-ghost" %>
+        <% unless current_user&.chief? %>
+          <%= link_to "テーブル管理へ戻る", admin_tables_path, class: "btn btn-ghost" %>
+        <% end %>
+        <%= link_to "テーブル詳細管理へ", admin_table_maintenance_index_path, class: "btn btn-ghost" %>
       </div>
     <% end %>
   </div>

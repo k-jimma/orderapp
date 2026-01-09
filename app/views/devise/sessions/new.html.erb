@@ -28,13 +28,20 @@
       </div>
     <% end %>
 
-    <div class="footer-actions">
-      <%= button_to "ゲストログイン（スタッフ権限）",
-            guest_user_session_path,
-            method: :post,
-            class: "btn btn-ghost",
-            form: { data: { turbo: false } } %>
-    </div>
+    <% if AppSetting.instance.guest_logins_enabled? %>
+      <div class="footer-actions">
+        <%= button_to "ゲストログイン（スタッフ権限）",
+              guest_user_session_path,
+              method: :post,
+              class: "btn btn-ghost",
+              form: { data: { turbo: false } } %>
+        <%= button_to "ゲストログイン（管理者権限）",
+              guest_admin_user_session_path,
+              method: :post,
+              class: "btn btn-ghost",
+              form: { data: { turbo: false } } %>
+      </div>
+    <% end %>
 
     <div class="muted">
       <%= render "devise/shared/links" %>

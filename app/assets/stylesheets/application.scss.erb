@@ -422,6 +422,66 @@ textarea:focus {
   animation: toast-in 180ms ease-out;
 }
 
+.confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.confirm-modal[hidden] {
+  display: none;
+}
+
+.confirm-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 20, 0.72);
+}
+
+.confirm-modal-card {
+  position: relative;
+  z-index: 1;
+  width: 92vw;
+  max-width: 520px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: #0b1020;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow);
+}
+
+.table-maintenance td,
+.table-maintenance th {
+  vertical-align: middle;
+}
+
+.table-maintenance-number-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-maintenance-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.table-filter-list {
+  display: grid;
+  gap: 8px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;

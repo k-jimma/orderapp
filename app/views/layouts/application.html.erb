@@ -19,12 +19,9 @@
 
   <body>
     <div class="toast-stack">
-      <%= turbo_frame_tag "flash" do %>
-        <% flash.each do |key, value| %>
-          <div class="flash <%= key %> toast"><%= value %></div>
-        <% end %>
-      <% end %>
+      <%= render "shared/flash" %>
     </div>
+    <%= render "shared/confirm_modal" %>
     <%= yield %>
   </body>
 </html>

@@ -1,0 +1,27 @@
+<tr id="<%= dom_id(table) %>">
+  <td>
+    <%= form_with model: table,
+          url: update_number_admin_table_maintenance_path(table),
+          method: :patch,
+          class: "table-maintenance-number-form" do |f| %>
+      <%= f.number_field :number, style: "max-width: 120px;" %>
+      <%= f.submit "番号更新", class: "btn btn-ghost" %>
+    <% end %>
+  </td>
+  <td class="muted"><%= table.token %></td>
+  <td>
+    <span class="badge"><%= table.active? ? "有効" : "無効" %></span>
+  </td>
+  <td class="table-maintenance-actions">
+    <%= button_to "トークン再生成",
+          rotate_token_admin_table_maintenance_path(table),
+          method: :patch,
+          class: "btn btn-ghost",
+          data: { turbo_confirm: "トークンを再生成します。テーブルは無効化されます。" } %>
+    <%= button_to "削除",
+          admin_delete_table_maintenance_path(table),
+          method: :delete,
+          class: "btn btn-ghost",
+          data: { turbo_confirm: "このテーブルを削除します。元に戻せません。" } %>
+  </td>
+</tr>

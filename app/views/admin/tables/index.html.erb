@@ -4,7 +4,11 @@
       <div class="surface stack-sm">
         <h3 class="section-title">共通PINの設定</h3>
         <p class="muted">全テーブル同じPINを設定します。未入力ならランダム4桁を自動生成します。</p>
-        <%= form_with url: generate_pin_bulk_admin_tables_path, method: :post, local: true, class: "grid grid-2" do |f| %>
+        <p class="muted">
+          現在の共通PIN:
+          <%= render "common_pin_badge", settings: @settings %>
+        </p>
+        <%= form_with url: generate_pin_bulk_admin_tables_path, method: :post, class: "grid grid-2" do |f| %>
           <div>
             <%= label_tag :pin, "共通PIN" %>
             <%= text_field_tag :pin, nil, placeholder: "例: 1234" %>
@@ -18,41 +22,16 @@
         <h3 class="section-title">一括有効化</h3>
         <p class="muted">全テーブルを一括で有効にします。</p>
         <%= button_to "全テーブルを有効化", activate_all_admin_tables_path, method: :patch, class: "btn btn-primary" %>
+        <%= button_to "全テーブルを無効化", deactivate_all_admin_tables_path, method: :patch, class: "btn btn-ghost" %>
       </div>
     </div>
   </div>
 
   <div class="card stack-sm">
     <h3 class="section-title">テーブル作成</h3>
-    <%= form_with model: [:admin, @table], url: admin_tables_path, method: :post, local: true, class: "grid grid-2" do |f| %>
-      <div>
-        <%= f.label :number, "テーブル番号" %>
-        <%= f.number_field :number %>
-      </div>
-      <% if @settings.global_access_mode.present? %>
-        <div>
-          <%= f.label :access_mode, "アクセス方式" %>
-          <div class="surface"><%= I18n.t("enums.table.access_mode.#{@settings.global_access_mode}") %></div>
-        </div>
-      <% else %>
-        <div>
-          <%= f.label :access_mode, "アクセス方式" %>
-          <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
-        </div>
-      <% end %>
-      <label class="list-inline" style="align-items:center;">
-        <%= f.check_box :active %> 有効
-      </label>
-      <% if @settings.token_expiry_enabled? %>
-        <div>
-          <%= f.label :token_expires_at, "トークン有効期限" %>
-          <%= f.datetime_field :token_expires_at %>
-        </div>
-      <% end %>
-      <div class="footer-actions">
-        <%= f.submit "作成", class: "btn btn-primary" %>
-      </div>
-    <% end %>
+    <div id="table_create_form">
+      <%= render "table_create_form", table: @table, settings: @settings %>
+    </div>
   </div>
 
   <div class="card stack-sm">
@@ -69,40 +48,8 @@
           <th>操作</th>
         </tr>
       </thead>
-      <tbody>
-        <% @tables.each do |table| %>
-          <tr>
-            <td><%= table.number %></td>
-            <td>
-              <%= I18n.t("enums.table.access_mode.#{@settings.access_mode_for(table)}") %>
-              <% if @settings.global_access_mode.present? %>
-                <span class="badge">全体設定</span>
-              <% end %>
-            </td>
-            <td><%= table.active? ? "ON" : "OFF" %></td>
-            <% if @settings.token_expiry_enabled? %>
-              <td><%= table.token_expires_at %></td>
-            <% end %>
-            <td>
-              <%= form_with url: admin_table_path(table), method: :patch, local: true, class: "stack-sm" do |f| %>
-                <% if @settings.global_access_mode.present? %>
-                  <div class="surface"><%= I18n.t("enums.table.access_mode.#{@settings.global_access_mode}") %></div>
-                <% else %>
-                  <div class="list-inline">
-                    <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] }, {}, {} %>
-                  </div>
-                <% end %>
-                <label class="list-inline" style="align-items:center;">
-                  <%= f.check_box :active %> 有効
-                </label>
-                <% if @settings.token_expiry_enabled? %>
-                  <%= f.datetime_field :token_expires_at %>
-                <% end %>
-                <%= f.submit "更新", class: "btn btn-primary" %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
+      <tbody id="admin_tables_body">
+        <%= render "table_body", tables: @tables, settings: @settings %>
       </tbody>
     </table>
   </div>
