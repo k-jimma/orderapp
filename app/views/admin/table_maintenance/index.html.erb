@@ -3,6 +3,12 @@
     <h2 class="section-title">テーブル詳細管理</h2>
     <p class="muted">テーブル番号の変更、トークン再生成、削除ができます。</p>
     <p class="muted">削除は「無効化済み」かつ「未会計の注文が無い」場合のみ可能です。</p>
+    <div class="footer-actions">
+      <%= link_to "QR一括保存",
+            qr_bulk_admin_table_maintenance_index_path,
+            class: "btn btn-ghost",
+            data: { turbo: false, turbo_confirm: "全テーブルのQRをまとめて生成して保存します。" } %>
+    </div>
   </div>
 
   <div class="card stack-sm">
@@ -10,6 +16,7 @@
       <thead>
         <tr>
           <th>番号</th>
+          <th>QR</th>
           <th>トークン</th>
           <th>状態</th>
           <th>操作</th>

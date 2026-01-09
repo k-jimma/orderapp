@@ -189,17 +189,18 @@ document.addEventListener("turbo:load", () => {
 
 function setupConfirmModal() {
   if (!window.Turbo) return
-  if (window.__confirmModalBound) return
-  window.__confirmModalBound = true
 
   const modal = document.getElementById("confirm-modal")
   const message = document.getElementById("confirm-modal-message")
   const ok = modal?.querySelector("[data-confirm-ok]")
   const cancels = modal?.querySelectorAll("[data-confirm-cancel]") || []
 
-  if (!modal || !message || !ok) return
+  if (!modal || !message || !ok) {
+    window.__confirmModalOpen = (text) => Promise.resolve(window.confirm(text))
+    return
+  }
 
-  const openModal = (text) =>
+  window.__confirmModalOpen = (text) =>
     new Promise((resolve) => {
       message.textContent = text
       modal.hidden = false
@@ -220,7 +221,10 @@ function setupConfirmModal() {
       cancels.forEach((el) => el.addEventListener("click", onCancel))
     })
 
-  window.Turbo.setConfirmMethod((text) => openModal(text))
+  window.Turbo.setConfirmMethod((text) => window.__confirmModalOpen(text))
+
+  if (window.__confirmModalClickBound) return
+  window.__confirmModalClickBound = true
 
   document.addEventListener(
     "click",
@@ -238,10 +242,24 @@ function setupConfirmModal() {
       const form = confirmEl.closest("form") || (confirmEl.tagName === "FORM" ? confirmEl : null)
       const submitter = event.target?.closest?.("button, input[type=\"submit\"]")
 
-      openModal(text).then((ok) => {
+      window.__confirmModalOpen(text).then((ok) => {
         if (!ok) return
         confirmEl.dataset.confirmed = "true"
         if (submitter) submitter.dataset.confirmed = "true"
+
+        if (confirmEl.dataset.qrGenerate) {
+          const targetId = confirmEl.getAttribute("data-qr-target")
+          const url = confirmEl.getAttribute("data-qr-url")
+          const img = targetId ? document.getElementById(targetId) : null
+          if (img && url) {
+            const cacheBust = `ts=${Date.now()}`
+            const next = url.includes("?") ? `${url}&${cacheBust}` : `${url}?${cacheBust}`
+            img.setAttribute("src", next)
+          }
+          delete confirmEl.dataset.confirmed
+          if (submitter) delete submitter.dataset.confirmed
+          return
+        }
 
         const confirmEls = [confirmEl, submitter].filter(Boolean)
         const removed = confirmEls.map((el) => ({

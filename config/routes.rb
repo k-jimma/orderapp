@@ -54,6 +54,10 @@ Rails.application.routes.draw do
       member do
         patch :update_number
         patch :rotate_token
+        get :qr
+      end
+      collection do
+        get :qr_bulk
       end
     end
     delete "table_maintenance/:id", to: "table_maintenance#destroy", as: :delete_table_maintenance

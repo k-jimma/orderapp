@@ -8,20 +8,46 @@
       <%= f.submit "番号更新", class: "btn btn-ghost" %>
     <% end %>
   </td>
-  <td class="muted"><%= table.token %></td>
   <td>
-    <span class="badge"><%= table.active? ? "有効" : "無効" %></span>
+    <div class="table-qr-cell">
+      <img
+        id="<%= dom_id(table, :qr) %>"
+        src="<%= qr_admin_table_maintenance_path(table) %>"
+        alt="テーブル <%= table.number %> QR"
+        class="table-qr-image">
+      <button
+        type="button"
+        class="btn btn-ghost"
+        data-confirm="QRを生成します。"
+        data-qr-generate="true"
+        data-qr-target="<%= dom_id(table, :qr) %>"
+        data-qr-url="<%= qr_admin_table_maintenance_path(table) %>">
+        QR生成
+      </button>
+      <%= link_to "QR保存",
+            qr_admin_table_maintenance_path(table, download: 1),
+            class: "btn btn-ghost",
+            data: { turbo: false, turbo_confirm: "QRを保存します。" } %>
+    </div>
   </td>
-  <td class="table-maintenance-actions">
-    <%= button_to "トークン再生成",
-          rotate_token_admin_table_maintenance_path(table),
-          method: :patch,
-          class: "btn btn-ghost",
-          data: { turbo_confirm: "トークンを再生成します。テーブルは無効化されます。" } %>
-    <%= button_to "削除",
-          admin_delete_table_maintenance_path(table),
-          method: :delete,
-          class: "btn btn-ghost",
-          data: { turbo_confirm: "このテーブルを削除します。元に戻せません。" } %>
+  <td class="muted"><%= table.token %></td>
+  <td class="table-maintenance-status">
+    <span class="badge <%= table.active? ? "status-tag--active" : "status-tag--inactive" %>">
+      <%= table.active? ? "有効" : "無効" %>
+    </span>
+  </td>
+  <td>
+    <div class="table-maintenance-actions">
+      <%= button_to "トークン再生成",
+            rotate_token_admin_table_maintenance_path(table),
+            method: :patch,
+            class: "btn btn-ghost",
+            data: { turbo_confirm: "トークンを再生成します。テーブルは無効化されます。" } %>
+      <%= button_to "削除",
+            admin_delete_table_maintenance_path(table),
+            method: :delete,
+            class: "btn btn-ghost",
+            data: { turbo_confirm: "このテーブルを削除します。元に戻せません。" } %>
+    </div>
   </td>
 </tr>

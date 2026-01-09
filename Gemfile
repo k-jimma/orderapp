@@ -21,6 +21,9 @@ gem "jbuilder"
 gem "devise"
 gem "devise-i18n"
 gem "sassc-rails"
+gem "rqrcode"
+gem "rqrcode_png"
+gem "rubyzip"
 
 gem "bcrypt", "~> 3.1.7"
 
