@@ -3,14 +3,7 @@ module Customer
     before_action :ensure_cart_table_scope!
 
     def show
-      @cart_items = cart_items
-      @items_by_id = Item.where(id: @cart_items.map { |x| x["item_id"] }).index_by(&:id)
-
-      @total_price = @cart_items.sum do |ci|
-        item = @items_by_id[ci["item_id"]]
-        next 0 unless item
-        item.price.to_i * ci["qty"].to_i
-      end
+      load_cart_view!
     end
 
     def add
@@ -27,10 +20,11 @@ module Customer
       end
 
       save_cart!
+      load_cart_view!
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to table_items_path(token: @table.token, staff: params[:staff]), notice: "カートに追加しました" }
+        format.html { redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "カートに追加しました" }
       end
     end
 
@@ -39,10 +33,19 @@ module Customer
       note = params[:note].to_s
 
       entry = cart_items.find { |x| x["item_id"] == item_id }
-      return redirect_to table_cart_path(token: @table.token, staff: params[:staff]), alert: "対象の商品が見つかりません" unless entry
+      unless entry
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:alert] = "対象の商品が見つかりません"
+            load_cart_view!
+          end
+          format.html { redirect_to table_cart_path(token: @table.token, staff: params[:staff]), alert: "対象の商品が見つかりません" }
+        end
+        return
+      end
 
       qty =
-        if params.key?(:quantity)
+        if params.key?(:quantity) && params[:quantity].present?
           params[:quantity].to_i
         else
           entry["qty"].to_i
@@ -56,24 +59,43 @@ module Customer
       end
 
       save_cart!
-      redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "更新しました"
-    end
+      load_cart_view!
 
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = "更新しました"
+        end
+        format.html { redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "更新しました" }
+      end
+    end
 
     def remove_item
       item_id = params.require(:item_id).to_i
       cart_items.reject! { |x| x["item_id"] == item_id }
       save_cart!
-      redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "削除しました"
+      load_cart_view!
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = "削除しました"
+        end
+        format.html { redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "削除しました" }
+      end
     end
 
     def clear
       session.delete(:cart)
-      redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "カートを空にしました"
+      load_cart_view!
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = "カートを空にしました"
+        end
+        format.html { redirect_to table_cart_path(token: @table.token, staff: params[:staff]), notice: "カートを空にしました" }
+      end
     end
 
     def checkout
-      # 会計中は確定させない（今のガード方針に合わせる）
       if billing_in_progress?(@table)
         render "customer/shared/table_billing", status: :locked
         return
@@ -107,7 +129,6 @@ module Customer
     private
 
     def ensure_cart_table_scope!
-      # 他テーブルの token で session カートが混ざるのを防ぐ
       c = session[:cart]
       return if c.blank?
 
@@ -125,6 +146,16 @@ module Customer
     def save_cart!
       session[:cart]["table_token"] = @table.token
       session[:cart]["items"] = cart_items
+    end
+
+    def load_cart_view!
+      @cart_items = cart_items
+      @items_by_id = Item.where(id: @cart_items.map { |x| x["item_id"] }).index_by(&:id)
+      @total_price = @cart_items.sum do |ci|
+        item = @items_by_id[ci["item_id"]]
+        next 0 unless item
+        item.price.to_i * ci["qty"].to_i
+      end
     end
   end
 end

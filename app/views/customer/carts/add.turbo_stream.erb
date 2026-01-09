@@ -5,11 +5,9 @@
 <% end %>
 
 <%= turbo_stream.replace "flash" do %>
-  <%= turbo_frame_tag "flash" do %>
-    <% flash.now[:notice] = "カートに追加しました" %>
-    <% flash.each do |key, value| %>
-      <div class="flash <%= key %>"><%= value %></div>
-    <% end %>
+  <% flash.now[:notice] = "カートに追加しました" %>
+  <% flash.each do |key, value| %>
+    <div class="flash <%= key %> toast"><%= value %></div>
   <% end %>
 <% end %>
 

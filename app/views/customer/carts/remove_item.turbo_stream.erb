@@ -1,0 +1,29 @@
+<% item_id = params[:item_id].to_i %>
+
+<% if @cart_items.empty? %>
+  <%= turbo_stream.replace "cart_content" do %>
+    <%= render "customer/carts/empty", table: @table, staff: params[:staff] %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.remove "cart_item_#{item_id}" %>
+
+  <%= turbo_stream.replace "cart_total" do %>
+    <%= render "customer/carts/total", total_price: @total_price %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "cart_badge" do %>
+  <%= turbo_frame_tag "cart_badge" do %>
+    <div id="cart_badge">
+      <%= render "customer/carts/cart_badge", token: @table.token, staff: params[:staff] %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "flash" do %>
+  <%= turbo_frame_tag "flash" do %>
+    <% flash.each do |key, value| %>
+      <div class="flash <%= key %>"><%= value %></div>
+    <% end %>
+  <% end %>
+<% end %>

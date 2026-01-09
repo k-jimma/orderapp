@@ -4,8 +4,8 @@
     <p class="muted">カテゴリを選ぶと該当メニューが表示されます</p>
   </div>
 
-  <div class="grid" style="grid-template-columns: 260px 1fr;">
-    <aside class="card stack-sm">
+  <div class="grid menu-grid" style="grid-template-columns: 260px 1fr;">
+    <aside class="card stack-sm menu-category">
       <h3 class="section-title">カテゴリ</h3>
       <nav class="stack-sm" data-category-list>
         <% @root_categories.each_with_index do |category, index| %>
@@ -33,7 +33,7 @@
                                     method: :post,
                                     local: false,
                                     data: { turbo: true },
-                                    class: "list-inline" do %>
+                                    class: "menu-qty-actions" do %>
 
                         <%= hidden_field_tag :item_id, item.id %>
 
@@ -73,7 +73,7 @@
                                         method: :post,
                                         local: false,
                                         data: { turbo: true },
-                                        class: "list-inline" do %>
+                                        class: "menu-qty-actions" do %>
 
                             <%= hidden_field_tag :item_id, item.id %>
 

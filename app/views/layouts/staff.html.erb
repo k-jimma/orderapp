@@ -25,11 +25,15 @@
         </div>
       </div>
     </header>
-    <main class="app-shell">
+
+    <div class="toast-stack" aria-live="polite" aria-atomic="true">
       <% flash.each do |key, value| %>
-        <div class="flash <%= key %>"><%= value %></div>
+        <div class="flash <%= key %> toast"><%= value %></div>
       <% end %>
-      <div class="surface" style="margin-bottom: 16px;">
+    </div>
+
+    <main class="app-shell">
+      <div class="surface staff-table-switcher">
         <label for="table-switcher" class="muted">顧客画面に移動</label>
         <div class="list-inline" style="margin-top: 8px;">
           <select id="table-switcher" data-table-switcher>
@@ -41,6 +45,7 @@
           <button type="button" class="btn btn-ghost" data-table-switcher-button>移動</button>
         </div>
       </div>
+
       <%= yield %>
     </main>
   </body>

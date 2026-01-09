@@ -2,89 +2,32 @@
   <div class="card stack-md">
     <h2 class="section-title">カート</h2>
 
-    <% if @cart_items.empty? %>
-      <p class="muted">カートは空です。</p>
-      <div class="footer-actions">
-        <%= link_to "メニューへ戻る", table_items_path(token: @table.token, staff: params[:staff]), class: "btn btn-primary" %>
-      </div>
-    <% else %>
-      <div class="stack-md">
-        <% @cart_items.each do |ci| %>
-          <% item = @items_by_id[ci["item_id"]] %>
-          <div class="card stack-sm" style="padding: 14px;">
-            <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
-              <div>
-                <div style="font-weight:600;"><%= item&.name || "商品" %></div>
-                <div class="muted"><%= ci["note"].presence || "メモなし" %></div>
-              </div>
-            </div>
-
-            <%= form_with url: update_item_table_cart_path(token: @table.token, staff: params[:staff]), method: :patch, local: true do |f| %>
-              <%= hidden_field_tag :item_id, ci["item_id"] %>
-              <div class="qty-stepper">
-                <%= link_to "−",
-                      update_item_table_cart_path(
-                        token: @table.token,
-                        staff: params[:staff],
-                        item_id: ci["item_id"],
-                        quantity: ci["qty"].to_i - 1,
-                        note: ci["note"]
-                      ),
-                      data: { turbo_method: :patch },
-                      class: "qty-btn",
-                      aria: { label: "数量を減らす" } %>
-
-                <span class="qty-value"><%= ci["qty"] %></span>
-
-                <%= link_to "＋",
-                      update_item_table_cart_path(
-                        token: @table.token,
-                        staff: params[:staff],
-                        item_id: ci["item_id"],
-                        quantity: ci["qty"].to_i + 1,
-                        note: ci["note"]
-                      ),
-                      data: { turbo_method: :patch },
-                      class: "qty-btn",
-                      aria: { label: "数量を増やす" } %>
-              </div>
-              <div class="stack-sm">
-                <%= label_tag :note, "メモ" %>
-                <%= text_field_tag :note, ci["note"] %>
-              </div>
-              <div class="footer-actions">
-                <%= f.submit "更新", class: "btn btn-ghost" %>
-
-                <%= link_to "削除",
-                      remove_item_table_cart_path(
-                        token: @table.token,
-                        staff: params[:staff],
-                        item_id: ci["item_id"]
-                      ),
-                      data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
-                      class: "btn btn-ghost" %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="card" style="padding: 14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-          <div class="muted">合計</div>
-          <div style="font-size: 18px; font-weight: 800;">
-            <%= number_to_currency(@total_price, unit: "¥", precision: 0, format: "%u%n") %>
-          </div>
+    <div id="cart_content">
+      <% if @cart_items.empty? %>
+        <%= render "customer/carts/empty", table: @table, staff: params[:staff] %>
+      <% else %>
+        <div class="stack-md">
+          <% @cart_items.each do |ci| %>
+            <%= render "customer/carts/cart_item",
+                  table: @table,
+                  staff: params[:staff],
+                  ci: ci,
+                  item: @items_by_id[ci["item_id"]] %>
+          <% end %>
         </div>
-      </div>
 
-      <div class="footer-actions">
-        <%= link_to "メニューへ戻る", table_items_path(token: @table.token, staff: params[:staff]), class: "btn btn-ghost" %>
-        <%= button_to "カートを空にする", clear_table_cart_path(token: @table.token, staff: params[:staff]),
-              method: :delete, class: "btn btn-ghost", form: { data: { turbo: false } } %>
-        <%= button_to "注文を確定する", checkout_table_cart_path(token: @table.token, staff: params[:staff]),
-              method: :post, class: "btn btn-primary", form: { data: { turbo: false } } %>
-      </div>
-    <% end %>
+        <div id="cart_total" class="cart-total">
+          <%= render "customer/carts/total", total_price: @total_price %>
+        </div>
+
+        <div class="footer-actions">
+          <%= link_to "メニューへ戻る", table_items_path(token: @table.token, staff: params[:staff]), class: "btn btn-ghost" %>
+          <%= button_to "カートを空にする", clear_table_cart_path(token: @table.token, staff: params[:staff]),
+                method: :delete, class: "btn btn-ghost" %>
+          <%= button_to "注文を確定する", checkout_table_cart_path(token: @table.token, staff: params[:staff]),
+                method: :post, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
