@@ -22,7 +22,7 @@
         </div>
 
         <% if devise_mapping.rememberable? %>
-          <label class="list-inline">
+          <label class="remember-me">
             <%= f.check_box :remember_me %>
             <span>ログイン状態を保持</span>
           </label>
@@ -34,7 +34,7 @@
       <% end %>
 
       <% if AppSetting.instance.guest_logins_enabled? %>
-        <div class="footer-actions">
+        <div class="guest-login-actions">
           <%= button_to "ゲストログイン（スタッフ権限）",
                 guest_user_session_path,
                 method: :post,

@@ -13,7 +13,8 @@
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand">スタッフコンソール</div>
-        <div class="nav-links">
+        <nav class="topbar-nav">
+          <div class="nav-links">
           <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
           <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
           <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
@@ -23,9 +24,32 @@
             <button type="button" class="btn btn-ghost" data-alert="管理者権限が必要です">管理者画面へ</button>
           <% end %>
           <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
-        </div>
+          </div>
+        </nav>
+        <button type="button" class="nav-toggle" data-nav-toggle aria-controls="nav-drawer" aria-expanded="false">
+          <span class="nav-toggle-bars" aria-hidden="true"></span>
+          <span class="sr-only">メニュー</span>
+        </button>
       </div>
     </header>
+    <div class="nav-drawer-backdrop" data-nav-backdrop hidden></div>
+    <aside id="nav-drawer" class="nav-drawer" data-nav-drawer aria-hidden="true">
+      <div class="nav-drawer-header">
+        <div class="brand">スタッフコンソール</div>
+        <button type="button" class="nav-drawer-close" data-nav-close aria-label="メニューを閉じる">×</button>
+      </div>
+      <nav class="nav-drawer-links">
+        <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
+        <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
+        <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
+        <% if current_user&.admin? || current_user&.chief? %>
+          <%= link_to "管理者画面へ", admin_root_path, class: "btn btn-ghost" %>
+        <% else %>
+          <button type="button" class="btn btn-ghost" data-alert="管理者権限が必要です">管理者画面へ</button>
+        <% end %>
+        <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
+      </nav>
+    </aside>
 
     <div class="toast-stack" aria-live="polite" aria-atomic="true">
       <%= render "shared/flash" %>

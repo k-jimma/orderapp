@@ -15,18 +15,43 @@
         <div class="brand">
           <%= link_to "管理コンソール", admin_root_path, class: "brand-link" %>
         </div>
-        <div class="nav-links">
-          <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>
-          <%= link_to "カテゴリ", admin_categories_path, class: "btn btn-ghost" %>
-          <%= link_to "テーブル", admin_tables_path, class: "btn btn-ghost" %>
-          <%= link_to "注文管理", admin_order_histories_path, class: "btn btn-ghost" %>
-          <%= link_to "スタッフ", admin_staffs_path, class: "btn btn-ghost" %>
-          <%= link_to "設定", edit_admin_settings_path, class: "btn btn-ghost" %>
-          <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost" %>
-          <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
-        </div>
+        <nav class="topbar-nav">
+          <div class="nav-links">
+            <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>
+            <%= link_to "カテゴリ", admin_categories_path, class: "btn btn-ghost" %>
+            <%= link_to "テーブル", admin_tables_path, class: "btn btn-ghost" %>
+            <%= link_to "注文管理", admin_order_histories_path, class: "btn btn-ghost" %>
+            <%= link_to "スタッフ", admin_staffs_path, class: "btn btn-ghost" %>
+            <%= link_to "設定", edit_admin_settings_path, class: "btn btn-ghost" %>
+            <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost" %>
+            <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
+          </div>
+        </nav>
+        <button type="button" class="nav-toggle" data-nav-toggle aria-controls="nav-drawer" aria-expanded="false">
+          <span class="nav-toggle-bars" aria-hidden="true"></span>
+          <span class="sr-only">メニュー</span>
+        </button>
       </div>
     </header>
+    <div class="nav-drawer-backdrop" data-nav-backdrop hidden></div>
+    <aside id="nav-drawer" class="nav-drawer" data-nav-drawer aria-hidden="true">
+      <div class="nav-drawer-header">
+        <div class="brand">
+          <%= link_to "管理コンソール", admin_root_path, class: "brand-link" %>
+        </div>
+        <button type="button" class="nav-drawer-close" data-nav-close aria-label="メニューを閉じる">×</button>
+      </div>
+      <nav class="nav-drawer-links">
+        <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>
+        <%= link_to "カテゴリ", admin_categories_path, class: "btn btn-ghost" %>
+        <%= link_to "テーブル", admin_tables_path, class: "btn btn-ghost" %>
+        <%= link_to "注文管理", admin_order_histories_path, class: "btn btn-ghost" %>
+        <%= link_to "スタッフ", admin_staffs_path, class: "btn btn-ghost" %>
+        <%= link_to "設定", edit_admin_settings_path, class: "btn btn-ghost" %>
+        <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost" %>
+        <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
+      </nav>
+    </aside>
     <div class="toast-stack">
       <%= render "shared/flash" %>
     </div>

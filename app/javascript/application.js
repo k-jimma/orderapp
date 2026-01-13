@@ -103,6 +103,49 @@ document.addEventListener("turbo:load", () => {
     })
   }
 
+  // Mobile nav drawer (admin/staff)
+  const navToggle = document.querySelector("[data-nav-toggle]")
+  const navDrawer = document.querySelector("[data-nav-drawer]")
+  const navBackdrop = document.querySelector("[data-nav-backdrop]")
+  const navClose = document.querySelector("[data-nav-close]")
+
+  if (navToggle && navDrawer && navBackdrop && !navToggle.dataset.bound) {
+    navToggle.dataset.bound = "true"
+
+    const openDrawer = () => {
+      navDrawer.classList.add("is-open")
+      navBackdrop.hidden = false
+      navDrawer.setAttribute("aria-hidden", "false")
+      navToggle.setAttribute("aria-expanded", "true")
+      document.body.style.overflow = "hidden"
+    }
+
+    const closeDrawer = () => {
+      navDrawer.classList.remove("is-open")
+      navBackdrop.hidden = true
+      navDrawer.setAttribute("aria-hidden", "true")
+      navToggle.setAttribute("aria-expanded", "false")
+      document.body.style.overflow = ""
+    }
+
+    navToggle.addEventListener("click", () => {
+      if (navDrawer.classList.contains("is-open")) {
+        closeDrawer()
+      } else {
+        openDrawer()
+      }
+    })
+
+    navBackdrop.addEventListener("click", closeDrawer)
+    navClose?.addEventListener("click", closeDrawer)
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && navDrawer.classList.contains("is-open")) {
+        closeDrawer()
+      }
+    })
+  }
+
   // ---- Admin Staff password helper ----
   const pw = document.getElementById("staff-password")
   const pwc = document.getElementById("staff-password-confirm")
