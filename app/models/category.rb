@@ -19,7 +19,7 @@ class Category < ApplicationRecord
       next if except && category.id == except.id
       next if depth >= 2
       label = "#{"--" * depth} #{category.name}"
-      options << [label.strip, category.id]
+      options << [ label.strip, category.id ]
       build_parent_options(category.children.order(:sort_order, :name), except: except, depth: depth + 1, options: options)
     end
     options

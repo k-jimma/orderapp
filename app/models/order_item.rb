@@ -15,7 +15,7 @@ class OrderItem < ApplicationRecord
 
   before_validation :copy_unit_price_from_item, on: :create
 
-  scope :progressing, -> { where(status: [statuses[:new], statuses[:cooking], statuses[:ready]]) }
+  scope :progressing, -> { where(status: [ statuses[:new], statuses[:cooking], statuses[:ready] ]) }
 
   def cancel!
     update!(status: :canceled)
@@ -25,9 +25,9 @@ class OrderItem < ApplicationRecord
     next_status = next_status.to_sym
 
     allowed = {
-      new: [:cooking, :canceled],
-      cooking: [:ready, :canceled],
-      ready: [:served, :canceled],
+      new: [ :cooking, :canceled ],
+      cooking: [ :ready, :canceled ],
+      ready: [ :served, :canceled ],
       served: [],
       canceled: []
     }

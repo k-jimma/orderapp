@@ -2,7 +2,7 @@ module Staff
   class PaymentsController < BaseController
     def new
       @orders = Order.billing.includes(:table, order_items: :item).where(id: params[:order_ids])
-      return redirect_to(staff_orders_path(status: :billing), alert: "対象がありません") if @orders.blank?
+      redirect_to(staff_orders_path(status: :billing), alert: "対象がありません") if @orders.blank?
     end
 
     def create

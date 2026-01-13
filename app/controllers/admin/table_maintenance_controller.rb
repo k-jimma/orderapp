@@ -86,7 +86,7 @@ module Admin
 
     def qr_bulk
       pngs = Table.order(:number).map do |table|
-        [table, qr_png_for(table)]
+        [ table, qr_png_for(table) ]
       end
 
       zip_data = Zip::OutputStream.write_buffer do |zip|
