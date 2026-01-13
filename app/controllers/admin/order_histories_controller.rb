@@ -81,9 +81,17 @@ module Admin
       when "table_number"
         scope.joins(orders: :table)
              .group("payments.id")
-             .order(Arel.sql("MIN(tables.number) #{filters[:dir]}"))
+             .order(table_number_order(filters[:dir]))
       else
         scope.order(paid_at: filters[:dir])
+      end
+    end
+
+    def table_number_order(direction)
+      if direction == "asc"
+        Arel.sql("MIN(tables.number) ASC")
+      else
+        Arel.sql("MIN(tables.number) DESC")
       end
     end
 
