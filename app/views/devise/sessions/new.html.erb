@@ -1,0 +1,50 @@
+<div class="app-shell auth-shell">
+  <div class="card stack-md auth-card">
+    <h2 class="section-title">ログイン</h2>
+
+    <%= form_with model: resource,
+          url: session_path(resource_name),
+          data: { turbo: false },
+          local: true do |f| %>
+      <div class="stack-sm">
+        <%= f.label :email %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      </div>
+
+      <div class="stack-sm">
+        <%= f.label :password %>
+        <%= f.password_field :password, autocomplete: "current-password" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <label class="list-inline">
+          <%= f.check_box :remember_me %>
+          <span>ログイン状態を保持</span>
+        </label>
+      <% end %>
+
+      <div class="footer-actions">
+        <%= f.submit "ログイン", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+
+    <% if AppSetting.instance.guest_logins_enabled? %>
+      <div class="footer-actions">
+        <%= button_to "ゲストログイン（スタッフ権限）",
+              guest_user_session_path,
+              method: :post,
+              class: "btn btn-ghost",
+              form: { data: { turbo: false } } %>
+        <%= button_to "ゲストログイン（管理者権限）",
+              guest_admin_user_session_path,
+              method: :post,
+              class: "btn btn-ghost",
+              form: { data: { turbo: false } } %>
+      </div>
+    <% end %>
+
+    <div class="muted">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="app-shell stack-md" style="max-width: 720px;">
+  <div class="card stack-sm">
+    <h2 class="section-title">スタッフを追加</h2>
+
+    <%= form_with model: @staff, url: admin_staffs_path, local: true, class: "stack-md" do |f| %>
+      <% if @staff.errors.any? %>
+        <div class="surface">
+          <ul>
+            <% @staff.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="grid grid-2">
+        <div>
+          <%= f.label :name, "名前" %>
+          <%= f.text_field :name %>
+        </div>
+
+        <div>
+          <%= f.label :email, "メールアドレス" %>
+          <%= f.email_field :email %>
+        </div>
+
+        <div>
+          <%= f.label :password, "初期パスワード" %>
+          <%= f.password_field :password, id: "staff-password", autocomplete: "new-password" %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "初期パスワード（確認）" %>
+          <%= f.password_field :password_confirmation, id: "staff-password-confirm", autocomplete: "new-password" %>
+        </div>
+      </div>
+
+      <div class="surface" data-password-rules style="display:none;">
+        <div class="stack-sm">
+          <div><span data-rule="len">❌</span> 12文字以上</div>
+          <div><span data-rule="lower">❌</span> 英小文字を含む</div>
+          <div><span data-rule="upper">❌</span> 英大文字を含む</div>
+          <div><span data-rule="digit">❌</span> 数字を含む</div>
+          <div><span data-rule="symbol">❌</span> 記号を含む</div>
+          <div><span data-rule="match">❌</span> 確認欄と一致</div>
+        </div>
+      </div>
+
+      <div class="list-inline">
+        <button type="button" class="btn btn-ghost" data-generate-password>
+          自動生成
+        </button>
+        <button type="button" class="btn btn-ghost" data-copy-password>
+          コピー
+        </button>
+        <span class="muted" data-password-hint style="align-self:center;"></span>
+      </div>
+
+      <div class="footer-actions">
+        <%= f.submit "作成", class: "btn btn-primary" %>
+        <%= link_to "戻る", admin_staffs_path, class: "btn btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>

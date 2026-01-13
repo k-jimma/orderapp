@@ -1,0 +1,38 @@
+<%= turbo_stream.replace "cart_badge" do %>
+  <%= turbo_frame_tag "cart_badge" do %>
+    <%= render "customer/carts/cart_badge", token: @table.token, staff: params[:staff] %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "flash" do %>
+  <% flash.now[:notice] = "カートに追加しました" %>
+  <% flash.each do |key, value| %>
+    <div class="flash <%= key %> toast"><%= value %></div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "menu_qty_#{params[:item_id].to_i}" do %>
+  <% item = Item.find_by(id: params[:item_id].to_i) %>
+  <% if item %>
+    <div id="menu_qty_<%= item.id %>">
+      <%= form_with url: add_table_cart_path(token: @table.token, staff: params[:staff]),
+                    method: :post,
+                    local: false,
+                    data: { turbo: true },
+                    class: "menu-qty-actions" do %>
+
+        <%= hidden_field_tag :item_id, item.id %>
+
+        <div class="qty-stepper" data-controller="qty" data-qty-min-value="1">
+          <button type="button" class="qty-btn" data-action="qty#dec" aria-label="数量を減らす">−</button>
+          <span class="qty-value" data-qty-target="label">1</span>
+          <button type="button" class="qty-btn" data-action="qty#inc" aria-label="数量を増やす">＋</button>
+
+          <%= hidden_field_tag :quantity, 1, data: { qty_target: "input" } %>
+        </div>
+
+        <%= submit_tag "カートに追加", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

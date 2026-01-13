@@ -1,0 +1,83 @@
+ja:
+  enums:
+    table:
+      access_mode:
+        pin_required: "PIN必須"
+        open_access: "PIN不要"
+    order:
+      status:
+        open: "受付中"
+        billing: "会計中"
+        closed: "会計済み"
+    order_item:
+      status:
+        new: "受付"
+        cooking: "調理中"
+        ready: "提供待ち"
+        served: "提供済"
+        canceled: "キャンセル"
+    payment:
+      status:
+        pending: "未会計"
+        paid: "会計済み"
+        void: "取消"
+    call:
+      kind:
+        bill: "会計"
+        water: "お水"
+        plate: "取り皿"
+      status:
+        open: "未対応"
+        closed: "対応済み"
+  activerecord:
+    models:
+      app_setting: "運用設定"
+      user: "ユーザー"
+      table: "テーブル"
+      order: "注文"
+      order_item: "注文明細"
+      item: "商品"
+      category: "カテゴリ"
+      payment: "会計"
+      call: "呼び出し"
+    attributes:
+      user:
+        email: "メールアドレス"
+        password: "パスワード"
+        name: "名前"
+        role: "権限"
+      table:
+        number: "テーブル番号"
+        access_mode: "アクセス方式"
+        active: "有効"
+        token_expires_at: "トークン有効期限"
+      app_setting:
+        token_expiry_enabled: "トークン有効期限"
+        default_access_mode: "デフォルトアクセス方式"
+        global_access_mode: "全体アクセス方式"
+      item:
+        name: "商品名"
+        price: "価格"
+        category: "カテゴリ"
+        is_available: "販売中"
+      category:
+        name: "カテゴリ名"
+        parent_id: "親カテゴリ"
+        sort_order: "並び順"
+      order:
+        status: "ステータス"
+        people_count: "人数"
+      order_item:
+        quantity: "数量"
+        unit_price: "単価"
+        status: "状態"
+      payment:
+        amount: "金額"
+        discount_amount: "割引額"
+        rounding_adjustment: "端数調整"
+        received_cash: "受領額"
+        change: "釣銭"
+        status: "ステータス"
+      call:
+        kind: "種別"
+        status: "ステータス"

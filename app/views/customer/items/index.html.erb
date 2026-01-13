@@ -1,0 +1,115 @@
+<div class="app-shell stack-md">
+  <div class="hero">
+    <h2 class="section-title">メニュー</h2>
+    <p class="muted">カテゴリを選ぶと該当メニューが表示されます</p>
+  </div>
+
+  <div class="grid menu-grid" style="grid-template-columns: 260px 1fr;">
+    <aside class="card stack-sm menu-category">
+      <h3 class="section-title">カテゴリ</h3>
+      <nav class="stack-sm" data-category-list>
+        <% @root_categories.each_with_index do |category, index| %>
+          <%= render partial: "category_nav", locals: { category: category, active: index.zero? } %>
+        <% end %>
+      </nav>
+    </aside>
+
+    <section class="card stack-sm">
+      <% @middle_categories.each_with_index do |category, index| %>
+        <div class="category-panel stack-md" data-category-panel="<%= category.id %>" style="<%= index.zero? ? '' : 'display:none;' %>">
+          <h3 class="section-title"><%= category.name %></h3>
+
+          <% if category.items.any? %>
+            <div class="stack-md">
+              <% category.items.each do |item| %>
+                <div class="surface" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                  <div>
+                    <div><strong><%= item.name %></strong></div>
+                    <div class="muted"><%= number_to_currency(item.price, unit: "¥", precision: 0, format: "%u%n") %></div>
+                  </div>
+                  <% if item.is_available? %>
+                    <div id="menu_qty_<%= item.id %>">
+                      <%= form_with url: add_table_cart_path(token: params[:token], staff: params[:staff]),
+                                    method: :post,
+                                    local: false,
+                                    data: { turbo: true },
+                                    class: "menu-qty-actions" do %>
+
+                        <%= hidden_field_tag :item_id, item.id %>
+
+                        <div class="qty-stepper" data-controller="qty" data-qty-min-value="1">
+                          <button type="button" class="qty-btn" data-action="qty#dec" aria-label="数量を減らす">−</button>
+                          <span class="qty-value" data-qty-target="label">1</span>
+                          <button type="button" class="qty-btn" data-action="qty#inc" aria-label="数量を増やす">＋</button>
+
+                          <%= hidden_field_tag :quantity, 1, data: { qty_target: "input" } %>
+                        </div>
+
+                        <%= submit_tag "カートに追加", class: "btn btn-primary" %>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="badge">売切れ</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <% category.children.order(:sort_order, :name).each do |child| %>
+            <div class="card stack-sm">
+              <h4 class="section-title"><%= child.name %></h4>
+              <% if child.items.any? %>
+                <div class="stack-md">
+                  <% child.items.each do |item| %>
+                    <div class="surface" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                      <div>
+                        <div><strong><%= item.name %></strong></div>
+                        <div class="muted"><%= number_to_currency(item.price, unit: "¥", precision: 0, format: "%u%n") %></div>
+                      </div>
+                      <% if item.is_available? %>
+                        <div id="menu_qty_<%= item.id %>">
+                          <%= form_with url: add_table_cart_path(token: params[:token], staff: params[:staff]),
+                                        method: :post,
+                                        local: false,
+                                        data: { turbo: true },
+                                        class: "menu-qty-actions" do %>
+
+                            <%= hidden_field_tag :item_id, item.id %>
+
+                            <div class="qty-stepper" data-controller="qty" data-qty-min-value="1">
+                              <button type="button" class="qty-btn" data-action="qty#dec" aria-label="数量を減らす">−</button>
+                              <span class="qty-value" data-qty-target="label">1</span>
+                              <button type="button" class="qty-btn" data-action="qty#inc" aria-label="数量を増やす">＋</button>
+
+                              <%= hidden_field_tag :quantity, 1, data: { qty_target: "input" } %>
+                            </div>
+
+                            <%= submit_tag "カートに追加", class: "btn btn-primary" %>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <span class="badge">売切れ</span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="muted">この小カテゴリにメニューがありません。</p>
+              <% end %>
+            </div>
+          <% end %>
+
+          <% if category.items.empty? && category.children.none? %>
+            <p class="muted">このカテゴリにメニューがありません。</p>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  </div>
+
+  <div class="footer-actions">
+    <%= link_to "カートを見る", table_cart_path(token: params[:token], staff: params[:staff]), class: "btn btn-primary" %>
+    <%= link_to "注文状況を見る", table_order_path(token: params[:token], staff: params[:staff]), class: "btn btn-ghost" %>
+  </div>
+</div>

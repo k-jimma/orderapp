@@ -1,0 +1,2 @@
+module Table::CallsHelper
+end

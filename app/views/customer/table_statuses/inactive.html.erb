@@ -1,0 +1,16 @@
+<div class="app-shell" style="max-width: 640px;">
+  <div class="card stack-md">
+    <h2 class="section-title">このテーブルは現在無効です</h2>
+    <p class="muted">有効化すると、このテーブルのQRからお客様がアクセスできるようになります。</p>
+
+    <div class="footer-actions">
+      <%= button_to "有効化する",
+            activate_table_table_status_path(@table.token, staff: 1),
+            method: :patch,
+            class: "btn btn-primary",
+            form: { data: { turbo: false } } %>
+
+      <%= link_to "戻る", staff_root_path, class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>

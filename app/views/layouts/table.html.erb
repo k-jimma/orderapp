@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>テーブル注文</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="theme-table">
+    <header class="topbar">
+      <div class="topbar-inner">
+      <div class="brand">
+        Table Order
+        <span class="pill" style="margin-left:10px;">
+          テーブル <%= @table.number %>
+        </span>
+
+        <% if params[:staff].present? %>
+            <span class="pill" style="margin:0 12px;">プレビュー</span>
+            <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost" %>
+        <% end %>
+      </div>
+        <div class="nav-links">
+          <%= link_to "メニュー", table_items_path(token: params[:token]), class: "btn btn-ghost" %>
+          <%= link_to "注文状況", table_order_path(token: params[:token]), class: "btn btn-primary" %>
+          <%= turbo_frame_tag "cart_badge" do %>
+            <div id="cart_badge">
+              <%= render "customer/carts/cart_badge", token: params[:token], staff: params[:staff] %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </header>
+    <div class="toast-stack">
+      <%= render "shared/flash" %>
+    </div>
+    <%= render "shared/confirm_modal" %>
+    <main class="app-shell">
+      <%= yield %>
+    </main>
+  </body>
+</html>

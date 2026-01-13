@@ -1,0 +1,45 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">会計</h2>
+    <% if @orders.present? %>
+      <div class="surface stack-sm">
+        <p class="muted">対象注文</p>
+        <ul class="stack-sm" style="padding-left: 16px;">
+          <% @orders.each do |o| %>
+          <li>注文<%= o.id %> (Table <%= o.table.number %>) 小計: <%= number_to_currency(o.subtotal, unit: "¥", precision: 0, format: "%u%n") %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with url: staff_payments_path, method: :post, local: true, class: "stack-md" do |f| %>
+      <% @orders.each do |o| %>
+        <%= hidden_field_tag "payment[order_ids][]", o.id %>
+      <% end %>
+
+      <div class="grid grid-2">
+        <div>
+          <%= f.label :discount_amount, "割引額" %>
+          <%= f.number_field :discount_amount, value: 0 %>
+        </div>
+        <div>
+          <%= f.label :rounding_adjustment, "端数調整" %>
+          <%= f.number_field :rounding_adjustment, value: 0 %>
+        </div>
+        <div>
+          <%= f.label :received_cash, "受領額" %>
+          <%= f.number_field :received_cash %>
+        </div>
+        <div>
+          <%= f.label :note, "メモ" %>
+          <%= f.text_field :note %>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <%= f.submit "会計確定", class: "btn btn-primary" %>
+        <%= link_to "戻る", staff_orders_path(status: :billing), class: "btn btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>

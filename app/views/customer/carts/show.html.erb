@@ -1,0 +1,33 @@
+<div class="app-shell" style="max-width: 640px;">
+  <div class="card stack-md">
+    <h2 class="section-title">カート</h2>
+
+    <div id="cart_content">
+      <% if @cart_items.empty? %>
+        <%= render "customer/carts/empty", table: @table, staff: params[:staff] %>
+      <% else %>
+        <div class="stack-md">
+          <% @cart_items.each do |ci| %>
+            <%= render "customer/carts/cart_item",
+                  table: @table,
+                  staff: params[:staff],
+                  ci: ci,
+                  item: @items_by_id[ci["item_id"]] %>
+          <% end %>
+        </div>
+
+        <div id="cart_total" class="cart-total">
+          <%= render "customer/carts/total", total_price: @total_price %>
+        </div>
+
+        <div class="footer-actions">
+          <%= link_to "メニューへ戻る", table_items_path(token: @table.token, staff: params[:staff]), class: "btn btn-ghost" %>
+          <%= button_to "カートを空にする", clear_table_cart_path(token: @table.token, staff: params[:staff]),
+                method: :delete, class: "btn btn-ghost" %>
+          <%= button_to "注文を確定する", checkout_table_cart_path(token: @table.token, staff: params[:staff]),
+                method: :post, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

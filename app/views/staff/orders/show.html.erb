@@ -1,0 +1,47 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">注文詳細</h2>
+    <div class="list-inline">
+      <span class="badge">テーブル <%= @order.table.number %></span>
+      <span class="pill status-<%= @order.status %>"><%= I18n.t("enums.order.status.#{@order.status}") %></span>
+    </div>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">明細</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>商品</th>
+          <th>数量</th>
+          <th>状態</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @order.order_items.each do |oi| %>
+          <tr>
+            <td><%= oi.item.name %></td>
+            <td><%= oi.quantity %></td>
+            <td><span class="pill status-<%= oi.status %>"><%= I18n.t("enums.order_item.status.#{oi.status}") %></span></td>
+            <td class="list-inline">
+              <%= button_to "調理中", to_cooking_staff_order_order_item_path(@order, oi), method: :patch, class: "btn btn-ghost" %>
+              <%= button_to "提供待ち", to_ready_staff_order_order_item_path(@order, oi), method: :patch, class: "btn btn-ghost" %>
+              <%= button_to "提供済", to_served_staff_order_order_item_path(@order, oi), method: :patch, class: "btn btn-primary" %>
+              <%= button_to "キャンセル", cancel_staff_order_order_item_path(@order, oi), method: :patch, data: { confirm: "キャンセルしますか？" }, class: "btn btn-ghost" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-actions">
+    <% if @order.open? %>
+      <%= button_to "会計開始", start_billing_staff_order_path(@order), method: :post, class: "btn btn-primary" %>
+    <% elsif @order.billing? %>
+      <%= link_to "会計へ進む", new_staff_payment_path(order_ids: [@order.id]), class: "btn btn-primary" %>
+    <% end %>
+    <%= link_to "一覧に戻る", staff_orders_path, class: "btn btn-ghost" %>
+  </div>
+</div>

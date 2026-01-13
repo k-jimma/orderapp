@@ -1,0 +1,9 @@
+<div class="app-shell stack-md">
+  <div class="card stack-sm">
+    <h2 class="section-title">商品を編集</h2>
+    <%= render "form", item: @item, categories: @categories %>
+    <div class="footer-actions">
+      <%= link_to "戻る", admin_items_path, class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>

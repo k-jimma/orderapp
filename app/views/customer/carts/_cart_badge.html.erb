@@ -1,0 +1,18 @@
+<% cart = session[:cart] %>
+<% count =
+  if cart.present? && cart["table_token"].to_s == token.to_s
+    (cart["items"] || []).sum { |x| x["qty"].to_i }
+  else
+    0
+  end
+%>
+
+<%= link_to table_cart_path(token: token, staff: staff),
+      class: "btn btn-ghost",
+      aria: { label: "カートを見る" },
+      data: { turbo_frame: "_top" } do %>
+  カート
+  <% if count > 0 %>
+    <span class="pill"><%= count %></span>
+  <% end %>
+<% end %>

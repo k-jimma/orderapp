@@ -1,0 +1,178 @@
+<div class="app-shell stack-md">
+  <div class="card stack-md">
+    <h2 class="section-title">注文管理</h2>
+    <%= form_with url: admin_order_histories_path, method: :get, local: true, class: "grid grid-2" do %>
+      <div class="stack-sm">
+        <label>日付範囲</label>
+        <div class="list-inline">
+          <input type="date" name="from" value="<%= @filters[:from] %>">
+          <span class="muted">〜</span>
+          <input type="date" name="to" value="<%= @filters[:to] %>">
+        </div>
+        <label class="list-inline" style="align-items:center;">
+          <input type="checkbox" name="all_dates" value="1" <%= @filters[:all_dates] ? "checked" : "" %>>
+          <span>全期間</span>
+        </label>
+      </div>
+
+      <div class="stack-sm">
+        <label>テーブル番号で絞り込み</label>
+        <% all_selected = @filters[:table_ids].empty? || @filters[:table_ids].size == @tables.size %>
+        <label class="list-inline" style="align-items:center;">
+          <input type="checkbox" data-table-filter-all <%= all_selected ? "checked" : "" %>>
+          <span>全選択</span>
+        </label>
+        <div class="table-filter-list">
+          <% @tables.each do |table| %>
+            <label class="list-inline" style="align-items:center;">
+              <input
+                type="checkbox"
+                name="table_ids[]"
+                value="<%= table.id %>"
+                data-table-filter-item
+                <%= (all_selected || @filters[:table_ids].include?(table.id.to_s)) ? "checked" : "" %>>
+              <span>テーブル <%= table.number %></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="stack-sm">
+        <label>並び替え</label>
+        <div class="list-inline">
+          <select name="sort">
+            <option value="paid_at" <%= @filters[:sort] == "paid_at" ? "selected" : "" %>>会計日時</option>
+            <option value="amount" <%= @filters[:sort] == "amount" ? "selected" : "" %>>会計金額</option>
+            <option value="table_number" <%= @filters[:sort] == "table_number" ? "selected" : "" %>>テーブル番号</option>
+          </select>
+          <select name="dir">
+            <option value="desc" <%= @filters[:dir] == "desc" ? "selected" : "" %>>降順</option>
+            <option value="asc" <%= @filters[:dir] == "asc" ? "selected" : "" %>>昇順</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button type="submit" class="btn btn-primary">絞り込む</button>
+        <%= link_to "クリア", admin_order_histories_path(all_dates: 1), class: "btn btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card stack-sm">
+      <h3 class="section-title">集計（合計）</h3>
+      <div class="list-inline">
+        <span class="badge">売上合計</span>
+        <strong><%= number_to_currency(@total_sales, unit: "¥", precision: 0, format: "%u%n") %></strong>
+      </div>
+      <div class="list-inline">
+        <span class="badge">件数</span>
+        <strong><%= @total_count %>件</strong>
+      </div>
+    </div>
+    <div class="card stack-sm">
+      <h3 class="section-title">集計（概要）</h3>
+      <p class="muted">日次・月次・年次の集計を下に表示します。</p>
+    </div>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">日次集計</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>売上</th>
+          <th>件数</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @daily_stats[:sales].sort_by { |k, _| k }.reverse_each do |day, amount| %>
+          <tr>
+            <td><%= day.to_date.to_fs(:ymd) %></td>
+            <td><%= number_to_currency(amount, unit: "¥", precision: 0, format: "%u%n") %></td>
+            <td><%= @daily_stats[:count][day] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">月次集計</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>月</th>
+          <th>売上</th>
+          <th>件数</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @monthly_stats[:sales].sort_by { |k, _| k }.reverse_each do |month, amount| %>
+          <tr>
+            <td><%= month.to_date.to_fs(:ym) %></td>
+            <td><%= number_to_currency(amount, unit: "¥", precision: 0, format: "%u%n") %></td>
+            <td><%= @monthly_stats[:count][month] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">年次集計</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>年</th>
+          <th>売上</th>
+          <th>件数</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @yearly_stats[:sales].sort_by { |k, _| k }.reverse_each do |year, amount| %>
+          <tr>
+            <td><%= year.to_date.to_fs(:y) %></td>
+            <td><%= number_to_currency(amount, unit: "¥", precision: 0, format: "%u%n") %></td>
+            <td><%= @yearly_stats[:count][year] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">注文履歴</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>会計日時</th>
+          <th>テーブル</th>
+          <th>会計金額</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payments.each do |payment| %>
+          <tr id="<%= dom_id(payment) %>">
+            <td><%= payment.paid_at&.to_fs(:ymd_hms) %></td>
+            <td>
+              <% table_numbers = payment.orders.map { |o| o.table.number }.uniq.sort %>
+              <%= table_numbers.map { |n| "テーブル #{n}" }.join(", ") %>
+            </td>
+            <td><%= number_to_currency(payment.amount, unit: "¥", precision: 0, format: "%u%n") %></td>
+            <td>
+              <%= button_to "履歴を削除",
+                    admin_order_history_path(payment),
+                    method: :delete,
+                    class: "btn btn-ghost",
+                    data: { turbo_confirm: "この注文履歴を削除します。元に戻せません。" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

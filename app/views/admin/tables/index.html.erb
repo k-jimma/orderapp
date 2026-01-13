@@ -1,0 +1,56 @@
+<div class="app-shell stack-md">
+  <div class="card stack-md">
+    <div class="grid grid-2">
+      <div class="surface stack-sm">
+        <h3 class="section-title">共通PINの設定</h3>
+        <p class="muted">全テーブル同じPINを設定します。未入力ならランダム4桁を自動生成します。</p>
+        <p class="muted">
+          現在の共通PIN:
+          <%= render "common_pin_badge", settings: @settings %>
+        </p>
+        <%= form_with url: generate_pin_bulk_admin_tables_path, method: :post, class: "grid grid-2" do |f| %>
+          <div>
+            <%= label_tag :pin, "共通PIN" %>
+            <%= text_field_tag :pin, nil, placeholder: "例: 1234" %>
+          </div>
+          <div class="footer-actions">
+            <%= f.submit "全テーブルに適用", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+      <div class="surface stack-sm">
+        <h3 class="section-title">一括有効化</h3>
+        <p class="muted">全テーブルを一括で有効にします。</p>
+        <%= button_to "全テーブルを有効化", activate_all_admin_tables_path, method: :patch, class: "btn btn-primary" %>
+        <%= button_to "全テーブルを無効化", deactivate_all_admin_tables_path, method: :patch, class: "btn btn-ghost" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="card stack-sm">
+    <h3 class="section-title">テーブル作成</h3>
+    <div id="table_create_form">
+      <%= render "table_create_form", table: @table, settings: @settings %>
+    </div>
+  </div>
+
+  <div class="card stack-sm">
+    <h2 class="section-title">テーブル一覧</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>番号</th>
+          <th>PIN設定</th>
+          <th>有効</th>
+          <% if @settings.token_expiry_enabled? %>
+            <th>トークン有効期限</th>
+          <% end %>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="admin_tables_body">
+        <%= render "table_body", tables: @tables, settings: @settings %>
+      </tbody>
+    </table>
+  </div>
+</div>

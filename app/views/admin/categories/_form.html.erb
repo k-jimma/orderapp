@@ -1,0 +1,28 @@
+<%= form_with model: [:admin, category], local: true, class: "stack-md" do |f| %>
+  <% if category.errors.any? %>
+    <div class="surface">
+      <ul>
+        <% category.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "カテゴリ名" %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :sort_order, "並び順" %>
+    <%= f.number_field :sort_order, min: 0 %>
+  </div>
+
+  <div>
+    <%= f.label :parent_id, "親カテゴリ" %>
+    <%= f.select :parent_id, @parent_options, { include_blank: "なし" } %>
+  </div>
+
+  <%= f.submit "保存", class: "btn btn-primary" %>
+<% end %>

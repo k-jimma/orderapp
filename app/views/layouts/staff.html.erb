@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>スタッフ</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="theme-staff" data-role="staff">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">スタッフコンソール</div>
+        <div class="nav-links">
+          <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
+          <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
+          <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
+          <% if current_user&.admin? || current_user&.chief? %>
+            <%= link_to "管理者画面へ", admin_root_path, class: "btn btn-ghost" %>
+          <% else %>
+            <button type="button" class="btn btn-ghost" data-alert="管理者権限が必要です">管理者画面へ</button>
+          <% end %>
+          <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
+        </div>
+      </div>
+    </header>
+
+    <div class="toast-stack" aria-live="polite" aria-atomic="true">
+      <%= render "shared/flash" %>
+    </div>
+    <%= render "shared/confirm_modal" %>
+
+    <main class="app-shell">
+      <div class="surface staff-table-switcher">
+        <label for="table-switcher" class="muted">顧客画面に移動</label>
+        <div class="list-inline" style="margin-top: 8px;">
+          <select id="table-switcher" data-table-switcher>
+            <option value="">テーブルを選択</option>
+            <% staff_tables.each do |t| %>
+              <option value="<%= t.token %>">テーブル <%= t.number %></option>
+            <% end %>
+          </select>
+          <button type="button" class="btn btn-ghost" data-table-switcher-button>移動</button>
+        </div>
+      </div>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

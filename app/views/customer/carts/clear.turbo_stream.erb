@@ -1,0 +1,19 @@
+<%= turbo_stream.replace "cart_content" do %>
+  <%= render "customer/carts/empty", table: @table, staff: params[:staff] %>
+<% end %>
+
+<%= turbo_stream.replace "cart_badge" do %>
+  <%= turbo_frame_tag "cart_badge" do %>
+    <div id="cart_badge">
+      <%= render "customer/carts/cart_badge", token: @table.token, staff: params[:staff] %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "flash" do %>
+  <%= turbo_frame_tag "flash" do %>
+    <% flash.each do |key, value| %>
+      <div class="flash <%= key %>"><%= value %></div>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,29 @@
+<%= form_with model: [:admin, table], url: admin_tables_path, method: :post, class: "grid grid-2" do |f| %>
+  <div>
+    <%= f.label :number, "テーブル番号" %>
+    <%= f.number_field :number %>
+  </div>
+  <% if settings.global_access_mode.present? %>
+    <div>
+      <%= f.label :access_mode, "アクセス方式" %>
+      <div class="surface"><%= I18n.t("enums.table.access_mode.#{settings.global_access_mode}") %></div>
+    </div>
+  <% else %>
+    <div>
+      <%= f.label :access_mode, "アクセス方式" %>
+      <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+    </div>
+  <% end %>
+  <label class="list-inline" style="align-items:center;">
+    <%= f.check_box :active %> 有効
+  </label>
+  <% if settings.token_expiry_enabled? %>
+    <div>
+      <%= f.label :token_expires_at, "トークン有効期限" %>
+      <%= f.datetime_field :token_expires_at %>
+    </div>
+  <% end %>
+  <div class="footer-actions">
+    <%= f.submit "作成", class: "btn btn-primary" %>
+  </div>
+<% end %>

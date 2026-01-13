@@ -1,0 +1,52 @@
+<div class="app-shell stack-md">
+  <div class="footer-actions">
+    <%= link_to "スタッフ追加", new_admin_staff_path, class: "btn btn-primary" %>
+  </div>
+
+  <div class="card stack-sm">
+    <h2 class="section-title">スタッフ一覧</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>メール</th>
+          <th>初期PW</th>
+          <th>作成日</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @staffs.each do |u| %>
+          <tr>
+            <td><%= u.id %></td>
+            <td><%= u.name %></td>
+            <td><%= u.email %></td>
+            <td>
+              <% if u.initial_password_visible? %>
+                <code><%= u.initial_password_plaintext %></code>
+              <% elsif u.initial_password_present? %>
+                <span class="badge badge-warning">期限切れ</span>
+              <% else %>
+                <span class="badge">変更済み</span>
+              <% end %>
+            </td>
+            <td><%= u.created_at.to_fs(:ymd_hm) %></td>
+            <td class="list-inline">
+              <%= button_to "削除",
+                    admin_staff_path(u),
+                    method: :delete,
+                    data: { confirm: "削除しますか？" },
+                    class: "btn btn-ghost" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <% if @staffs.blank? %>
+      <p class="muted" style="margin-top:12px;">スタッフがまだいません。</p>
+    <% end %>
+  </div>
+</div>

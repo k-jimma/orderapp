@@ -1,0 +1,12 @@
+<div class="app-shell stack-md">
+  <div class="footer-actions">
+    <%= link_to "新規作成", new_admin_category_path, class: "btn btn-primary" %>
+  </div>
+
+  <div class="card stack-sm">
+    <h2 class="section-title">カテゴリ一覧</h2>
+    <div class="stack-sm">
+      <%= render partial: "category_node", collection: @categories, as: :category, locals: { level: 0 } %>
+    </div>
+  </div>
+</div>
