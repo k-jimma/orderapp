@@ -76,7 +76,10 @@ document.addEventListener("turbo:load", () => {
       if (btn.dataset.bound) return
       btn.dataset.bound = "true"
 
-      btn.addEventListener("click", () => showCategory(btn.dataset.categoryButton))
+      btn.addEventListener("click", () => {
+        showCategory(btn.dataset.categoryButton)
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      })
       if (index === 0) showCategory(btn.dataset.categoryButton)
     })
   }

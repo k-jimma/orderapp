@@ -12,19 +12,21 @@
   <body class="theme-table">
     <header class="topbar">
       <div class="topbar-inner">
-      <div class="brand">
-        Table Order
-        <span class="pill" style="margin-left:10px;">
+      <div class="brand table-brand">
+        <span class="table-brand-title">オーダー画面</span>
+        <span class="pill table-pill">
           テーブル <%= @table.number %>
         </span>
 
         <% if params[:staff].present? %>
-            <span class="pill" style="margin:0 12px;">プレビュー</span>
-            <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost" %>
+            <span class="pill table-pill table-pill--preview">プレビュー</span>
+            <%= link_to "スタッフ画面へ", staff_root_path, class: "btn btn-ghost table-preview-link" %>
         <% end %>
       </div>
-        <div class="nav-links">
-          <%= link_to "メニュー", table_items_path(token: params[:token]), class: "btn btn-ghost" %>
+        <div class="nav-links table-nav">
+          <% unless params[:staff].present? %>
+            <%= link_to "メニュー", table_items_path(token: params[:token]), class: "btn btn-ghost" %>
+          <% end %>
           <%= link_to "注文状況", table_order_path(token: params[:token]), class: "btn btn-primary" %>
           <%= turbo_frame_tag "cart_badge" do %>
             <div id="cart_badge">
