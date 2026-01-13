@@ -2,7 +2,7 @@
   <div class="card stack-sm">
     <h2 class="section-title">運用設定</h2>
     <%= form_with model: [:admin, @settings], url: admin_settings_path, method: :patch, local: true, class: "stack-md" do |f| %>
-      <label class="list-inline" style="align-items:center;">
+      <label class="list-inline settings-checkbox">
         <%= f.check_box :token_expiry_enabled %>
         <span>トークン有効期限を使う</span>
       </label>
@@ -20,7 +20,7 @@
       </div>
 
       <% if current_user&.chief? %>
-        <label class="list-inline" style="align-items:center;">
+        <label class="list-inline settings-checkbox">
           <%= f.check_box :guest_logins_enabled %>
           <span>ゲストログインボタンを表示する</span>
         </label>
