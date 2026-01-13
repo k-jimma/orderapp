@@ -20,7 +20,9 @@
   <% end %>
 
   <%= turbo_stream.replace "cart_total" do %>
-    <%= render "customer/carts/total", total_price: @total_price %>
+    <div id="cart_total" class="cart-total">
+      <%= render "customer/carts/total", total_price: @total_price %>
+    </div>
   <% end %>
 <% end %>
 
