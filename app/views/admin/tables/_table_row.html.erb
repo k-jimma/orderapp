@@ -8,7 +8,7 @@
   </td>
   <td>
     <div class="list-inline">
-      <span><%= table.active? ? "ON" : "OFF" %></span>
+      <span><%= table.active? ? "有効" : "無効" %></span>
       <% if table.active? %>
         <%= button_to "無効化", admin_table_path(table),
               method: :patch,

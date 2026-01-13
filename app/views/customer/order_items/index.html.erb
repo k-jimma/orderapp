@@ -14,7 +14,7 @@
           <tr>
             <td><%= oi.item.name %></td>
             <td><%= oi.quantity %></td>
-            <td><span class="pill status-<%= oi.status %>"><%= oi.status %></span></td>
+            <td><span class="pill status-<%= oi.status %>"><%= I18n.t("enums.order_item.status.#{oi.status}") %></span></td>
           </tr>
         <% end %>
       </tbody>

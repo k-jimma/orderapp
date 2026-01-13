@@ -19,7 +19,7 @@ class Order < ApplicationRecord
   end
 
   def start_billing!
-    raise "open以外は会計開始できません" unless open?
+    raise "受付中以外は会計開始できません" unless open?
     update!(status: :billing)
   end
 
@@ -38,7 +38,7 @@ class Order < ApplicationRecord
   def only_one_open_per_table
     return unless table && status.to_s == "open"
     if table.orders.where(status: :open).exists?
-      errors.add(:base, "このテーブルには既にopenの注文が存在します")
+      errors.add(:base, "このテーブルには既に受付中の注文が存在します")
     end
   end
 end

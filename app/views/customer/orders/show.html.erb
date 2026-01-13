@@ -28,7 +28,7 @@
             <td><%= oi.item.name %></td>
             <td><%= oi.quantity %></td>
             <td><%= number_to_currency(oi.unit_price, unit: "¥", precision: 0, format: "%u%n") %></td>
-            <td><span class="pill status-<%= oi.status %>"><%= oi.status %></span></td>
+            <td><span class="pill status-<%= oi.status %>"><%= I18n.t("enums.order_item.status.#{oi.status}") %></span></td>
           </tr>
         <% end %>
       </tbody>
@@ -42,7 +42,7 @@
       <div class="grid grid-2">
         <div>
           <%= label_tag "call[kind]", "種別" %>
-          <%= select_tag "call[kind]", options_for_select(Call.kinds.keys.map { |k| [k, k] }) %>
+          <%= select_tag "call[kind]", options_for_select(Call.kinds.keys.map { |k| [I18n.t("enums.call.kind.#{k}"), k] }) %>
         </div>
         <div>
           <%= label_tag "call[message]", "メッセージ (任意)" %>

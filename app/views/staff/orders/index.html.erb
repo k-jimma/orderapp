@@ -2,9 +2,9 @@
   <div class="surface list-inline">
     <strong>ステータス:</strong>
     <%= link_to "全て", staff_orders_path, class: "btn btn-ghost" %>
-    <%= link_to "open", staff_orders_path(status: :open), class: "btn btn-ghost" %>
-    <%= link_to "billing", staff_orders_path(status: :billing), class: "btn btn-ghost" %>
-    <%= link_to "closed", staff_orders_path(status: :closed), class: "btn btn-ghost" %>
+    <%= link_to I18n.t("enums.order.status.open"), staff_orders_path(status: :open), class: "btn btn-ghost" %>
+    <%= link_to I18n.t("enums.order.status.billing"), staff_orders_path(status: :billing), class: "btn btn-ghost" %>
+    <%= link_to I18n.t("enums.order.status.closed"), staff_orders_path(status: :closed), class: "btn btn-ghost" %>
   </div>
 
   <div class="card stack-sm">
@@ -24,7 +24,7 @@
           <tr>
             <td><%= order.id %></td>
             <td><%= order.table.number %></td>
-            <td><span class="pill status-<%= order.status %>"><%= order.status %></span></td>
+            <td><span class="pill status-<%= order.status %>"><%= I18n.t("enums.order.status.#{order.status}") %></span></td>
             <td><%= l(order.updated_at, format: :short) %></td>
             <td><%= link_to "詳細", staff_order_path(order), class: "btn btn-primary" %></td>
           </tr>

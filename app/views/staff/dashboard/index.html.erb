@@ -46,9 +46,9 @@
         <% @calls.each do |call| %>
           <tr>
             <td><%= call.table.number %></td>
-            <td><%= call.kind %></td>
+            <td><%= I18n.t("enums.call.kind.#{call.kind}") %></td>
             <td><%= call.message %></td>
-            <td><%= call.status %></td>
+            <td><%= I18n.t("enums.call.status.#{call.status}") %></td>
           </tr>
         <% end %>
       </tbody>

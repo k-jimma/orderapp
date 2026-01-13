@@ -15,12 +15,12 @@
         <% @calls.each do |call| %>
           <tr>
             <td><%= call.table.number %></td>
-            <td><%= call.kind %></td>
+            <td><%= I18n.t("enums.call.kind.#{call.kind}") %></td>
             <td><%= call.message %></td>
-            <td><%= call.status %></td>
+            <td><%= I18n.t("enums.call.status.#{call.status}") %></td>
             <td>
               <%= form_with url: staff_call_path(call), method: :patch, local: true, class: "list-inline" do |f| %>
-                <%= f.select :status, Call.statuses.keys, {}, { name: "call[status]" } %>
+                <%= f.select :status, Call.statuses.keys.map { |k| [I18n.t("enums.call.status.#{k}"), k] }, {}, { name: "call[status]" } %>
                 <%= f.submit "更新", class: "btn btn-primary" %>
               <% end %>
             </td>

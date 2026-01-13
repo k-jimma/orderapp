@@ -34,13 +34,19 @@ class OrderItem < ApplicationRecord
 
     current = status.to_sym
     unless allowed[current].include?(next_status)
-      raise InvalidTransitionError, "#{current} から #{next_status} へは変更できません"
+      current_label = self.class.status_label(current)
+      next_label = self.class.status_label(next_status)
+      raise InvalidTransitionError, "#{current_label} から #{next_label} へは変更できません"
     end
 
     update!(status: next_status)
   end
 
   class InvalidTransitionError < StandardError; end
+
+  def self.status_label(status)
+    I18n.t("enums.order_item.status.#{status}", default: status.to_s)
+  end
 
   private
 

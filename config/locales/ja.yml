@@ -4,6 +4,31 @@ ja:
       access_mode:
         pin_required: "PIN必須"
         open_access: "PIN不要"
+    order:
+      status:
+        open: "受付中"
+        billing: "会計中"
+        closed: "会計済み"
+    order_item:
+      status:
+        new: "受付"
+        cooking: "調理中"
+        ready: "提供待ち"
+        served: "提供済"
+        canceled: "キャンセル"
+    payment:
+      status:
+        pending: "未会計"
+        paid: "会計済み"
+        void: "取消"
+    call:
+      kind:
+        bill: "会計"
+        water: "お水"
+        plate: "取り皿"
+      status:
+        open: "未対応"
+        closed: "対応済み"
   activerecord:
     models:
       app_setting: "運用設定"

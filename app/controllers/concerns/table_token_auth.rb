@@ -11,15 +11,15 @@ module TableTokenAuth
   def set_current_table
     token = params[:token].to_s
     @current_table = Table.find_by(token: token)
-    return render(status: :not_found, plain: "Table not found") if @current_table.nil?
+    return render(status: :not_found, plain: "テーブルが見つかりません") if @current_table.nil?
 
     if AppSetting.instance.token_expiry_enabled? &&
         @current_table.token_expires_at.present? &&
         @current_table.token_expires_at < Time.current
-      return render(status: :forbidden, plain: "Token expired")
+      return render(status: :forbidden, plain: "トークンの有効期限が切れています")
     end
 
-    return render(status: :forbidden, plain: "Table is inactive") unless @current_table.active?
+    return render(status: :forbidden, plain: "テーブルが無効です") unless @current_table.active?
 
     if @current_table.last_used_at.nil? || @current_table.last_used_at < 10.minutes.ago
       @current_table.update_column(:last_used_at, Time.current)

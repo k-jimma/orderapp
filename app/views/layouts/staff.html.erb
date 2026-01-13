@@ -3,6 +3,7 @@
   <head>
     <title>スタッフ</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -11,7 +12,7 @@
   <body class="theme-staff" data-role="staff">
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand">Staff Console</div>
+        <div class="brand">スタッフコンソール</div>
         <div class="nav-links">
           <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
           <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>

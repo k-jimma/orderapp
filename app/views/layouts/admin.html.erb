@@ -3,6 +3,7 @@
   <head>
     <title>管理</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -12,7 +13,7 @@
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand">
-          <%= link_to "Admin Console", admin_root_path, class: "brand-link" %>
+          <%= link_to "管理コンソール", admin_root_path, class: "brand-link" %>
         </div>
         <div class="nav-links">
           <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>

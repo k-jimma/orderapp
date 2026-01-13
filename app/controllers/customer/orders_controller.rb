@@ -34,7 +34,7 @@ module Customer
 
     def complete
       @order = current_table.orders.open.first
-      redirect_to table_items_path(token: current_table.token), alert: "open注文がありません" unless @order
+      redirect_to table_items_path(token: current_table.token), alert: "受付中の注文がありません" unless @order
     end
   end
 end
