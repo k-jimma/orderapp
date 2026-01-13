@@ -31,3 +31,12 @@ User.find_or_create_by!(email: "chief@example.com") do |u|
     end
   u.password_confirmation = u.password
 end
+
+portfolio_numbers = [901, 902, 903]
+portfolio_numbers.each do |number|
+  table = Table.find_or_initialize_by(number: number)
+  table.portfolio = true
+  table.access_mode = :open_access
+  table.active = true
+  table.save! if table.changed?
+end

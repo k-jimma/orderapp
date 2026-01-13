@@ -1,4 +1,9 @@
 class Users::SessionsController < Devise::SessionsController
+  def new
+    @portfolio_tables = Table.portfolio.order(:number)
+    super
+  end
+
   def guest
     return redirect_to new_user_session_path, alert: "ゲストログインは現在無効です" unless guest_logins_enabled?
 

@@ -12,6 +12,7 @@ class Table < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
+  scope :portfolio, -> { where(portfolio: true) }
 
   def inactive?
     !active?

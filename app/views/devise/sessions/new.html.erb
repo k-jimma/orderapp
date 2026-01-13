@@ -1,50 +1,72 @@
 <div class="app-shell auth-shell">
-  <div class="card stack-md auth-card">
-    <h2 class="section-title">ログイン</h2>
-
-    <%= form_with model: resource,
-          url: session_path(resource_name),
-          data: { turbo: false },
-          local: true do |f| %>
-      <div class="stack-sm">
-        <%= f.label :email %>
-        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  <div class="auth-portfolio-grid">
+    <div class="card stack-md auth-card">
+      <div class="list-inline" style="align-items:center; justify-content:space-between;">
+        <h2 class="section-title">ログイン</h2>
+        <span class="badge">ポートフォリオ</span>
       </div>
+      <p class="muted">この画面はポートフォリオ用です。</p>
 
-      <div class="stack-sm">
-        <%= f.label :password %>
-        <%= f.password_field :password, autocomplete: "current-password" %>
-      </div>
+      <%= form_with model: resource,
+            url: session_path(resource_name),
+            data: { turbo: false },
+            local: true do |f| %>
+        <div class="stack-sm">
+          <%= f.label :email %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+        </div>
 
-      <% if devise_mapping.rememberable? %>
-        <label class="list-inline">
-          <%= f.check_box :remember_me %>
-          <span>ログイン状態を保持</span>
-        </label>
+        <div class="stack-sm">
+          <%= f.label :password %>
+          <%= f.password_field :password, autocomplete: "current-password" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <label class="list-inline">
+            <%= f.check_box :remember_me %>
+            <span>ログイン状態を保持</span>
+          </label>
+        <% end %>
+
+        <div class="footer-actions">
+          <%= f.submit "ログイン", class: "btn btn-primary" %>
+        </div>
       <% end %>
 
-      <div class="footer-actions">
-        <%= f.submit "ログイン", class: "btn btn-primary" %>
-      </div>
-    <% end %>
+      <% if AppSetting.instance.guest_logins_enabled? %>
+        <div class="footer-actions">
+          <%= button_to "ゲストログイン（スタッフ権限）",
+                guest_user_session_path,
+                method: :post,
+                class: "btn btn-ghost",
+                form: { data: { turbo: false } } %>
+          <%= button_to "ゲストログイン（管理者権限）",
+                guest_admin_user_session_path,
+                method: :post,
+                class: "btn btn-ghost",
+                form: { data: { turbo: false } } %>
+        </div>
+      <% end %>
 
-    <% if AppSetting.instance.guest_logins_enabled? %>
-      <div class="footer-actions">
-        <%= button_to "ゲストログイン（スタッフ権限）",
-              guest_user_session_path,
-              method: :post,
-              class: "btn btn-ghost",
-              form: { data: { turbo: false } } %>
-        <%= button_to "ゲストログイン（管理者権限）",
-              guest_admin_user_session_path,
-              method: :post,
-              class: "btn btn-ghost",
-              form: { data: { turbo: false } } %>
+      <div class="muted">
+        <%= render "devise/shared/links" %>
       </div>
-    <% end %>
-
-    <div class="muted">
-      <%= render "devise/shared/links" %>
     </div>
+
+    <% if @portfolio_tables.present? %>
+      <div class="card stack-md portfolio-qr-card">
+        <h3 class="section-title">ポートフォリオ用テーブルQR</h3>
+        <p class="muted">QRを読み取るとテーブル注文画面を確認できます。</p>
+        <div class="portfolio-qr-list">
+          <% @portfolio_tables.each do |table| %>
+            <div class="stack-sm portfolio-qr-item">
+              <div class="badge">テーブル <%= table.number %></div>
+              <%= image_tag portfolio_table_qr_path(table), alt: "ポートフォリオ用テーブル#{table.number}のQR", width: 160, height: 160, loading: "lazy" %>
+              <%= link_to "メニューを開く", table_items_path(token: table.token), class: "btn btn-ghost", data: { turbo: false } %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
