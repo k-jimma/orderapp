@@ -1,14 +1,15 @@
-<div class="stack-sm">
-  <div class="badge"><%= category.name %></div>
-  <div class="stack-sm">
+<div class="category-root card stack-sm">
+  <div class="category-root-title"><%= category.name %></div>
+  <div class="stack-sm category-child-list">
     <% category.children.order(:sort_order, :name).each_with_index do |child, idx| %>
-      <button type="button"
-        class="btn btn-ghost"
-        style="justify-content:flex-start; padding-left:12px; width:100%;"
-        data-category-button="<%= child.id %>"
-        <%= active && idx.zero? ? 'data-category-active="true"' : '' %>>
-        <%= child.name %>
-      </button>
+      <div class="category-child-card">
+        <button type="button"
+          class="btn btn-ghost category-child-button"
+          data-category-button="<%= child.id %>"
+          <%= active && idx.zero? ? 'data-category-active="true"' : '' %>>
+          <%= child.name %>
+        </button>
+      </div>
     <% end %>
   </div>
 </div>

@@ -109,7 +109,9 @@
   </div>
 
   <div class="footer-actions">
-    <%= link_to "カートを見る", table_cart_path(token: params[:token], staff: params[:staff]), class: "btn btn-primary" %>
-    <%= link_to "注文状況を見る", table_order_path(token: params[:token], staff: params[:staff]), class: "btn btn-ghost" %>
+    <div class="footer-actions-inner">
+      <%= link_to "カートを見る", table_cart_path(token: params[:token], staff: params[:staff]), class: "btn btn-primary" %>
+      <%= link_to "注文状況を見る", table_order_path(token: params[:token], staff: params[:staff]), class: "btn btn-ghost" %>
+    </div>
   </div>
 </div>
