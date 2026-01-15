@@ -9,24 +9,25 @@
 
       <div>
         <%= f.label :default_access_mode, "新規テーブルのデフォルト" %>
-        <%= f.select :default_access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+        <%= f.select :default_access_mode, Table.access_modes.keys.map { |mode_key| [I18n.t("enums.table.access_mode.#{mode_key}"), mode_key] } %>
       </div>
 
       <div>
         <%= f.label :global_access_mode, "全体のアクセス方式（任意）" %>
         <%= f.select :global_access_mode,
-          [["テーブルごとに設定", nil]] + Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+          [["テーブルごとに設定", nil]] + Table.access_modes.keys.map { |mode_key| [I18n.t("enums.table.access_mode.#{mode_key}"), mode_key] } %>
         <p class="muted">設定すると、各テーブルのアクセス方式は固定されます。</p>
       </div>
 
       <% if current_user&.chief? %>
+        <!-- chief のみゲストログイン設定を変更可能 -->
         <label class="list-inline settings-checkbox">
           <%= f.check_box :guest_logins_enabled %>
           <span>ゲストログインボタンを表示する</span>
         </label>
       <% end %>
 
-      <div class="footer-actions">
+      <div class="list-inline">
         <%= f.submit "保存", class: "btn btn-primary" %>
         <% unless current_user&.chief? %>
           <%= link_to "テーブル管理へ戻る", admin_tables_path, class: "btn btn-ghost" %>

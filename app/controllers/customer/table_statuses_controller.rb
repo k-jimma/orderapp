@@ -4,6 +4,7 @@ module Customer
     skip_before_action :ensure_table_active!, only: [ :activate ]
 
     def activate
+      # 会計中は再有効化できない
       Rails.logger.info("[activate] before: table=#{@table.id} active=#{@table.active}")
       if billing_in_progress?(@table)
         redirect_to table_items_path(token: @table.token, staff: params[:staff]),

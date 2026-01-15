@@ -1,4 +1,5 @@
 ja:
+  # Enum 表示名
   enums:
     table:
       access_mode:
@@ -29,6 +30,7 @@ ja:
       status:
         open: "未対応"
         closed: "対応済み"
+  # ActiveRecord 表示名
   activerecord:
     models:
       app_setting: "運用設定"

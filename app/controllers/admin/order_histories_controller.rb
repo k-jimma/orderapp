@@ -1,21 +1,23 @@
 module Admin
   class OrderHistoriesController < BaseController
     def index
+      # フィルタリングオプションの取得
       @tables = Table.order(:number)
       @filters = extract_filters
-      filtered = filtered_scope(@filters)
+      filtered_payments = filtered_scope(@filters)
 
-      @total_sales = filtered.sum(:amount)
-      @total_count = filtered.count
-      @daily_stats = group_stats(filtered, "DATE(paid_at)")
-      @monthly_stats = group_stats(filtered, "DATE_TRUNC('month', paid_at)")
-      @yearly_stats = group_stats(filtered, "DATE_TRUNC('year', paid_at)")
+      @total_sales = filtered_payments.sum(:amount)
+      @total_count = filtered_payments.count
+      @daily_stats = group_stats(filtered_payments, "DATE(paid_at)")
+      @monthly_stats = group_stats(filtered_payments, "DATE_TRUNC('month', paid_at)")
+      @yearly_stats = group_stats(filtered_payments, "DATE_TRUNC('year', paid_at)")
 
-      @payments = apply_sort(filtered, @filters)
+      @payments = apply_sort(filtered_payments, @filters)
                    .includes(orders: :table)
     end
 
     def destroy
+      # 指定された会計履歴と関連する注文を削除
       payment = Payment.find(params[:id])
       Payment.transaction do
         payment.orders.destroy_all
@@ -42,6 +44,7 @@ module Admin
     private
 
     def extract_filters
+      # フィルタリングオプションの抽出とデフォルト値の設定
       {
         from: parse_date(params[:from]),
         to: parse_date(params[:to]),
@@ -53,12 +56,14 @@ module Admin
     end
 
     def filtered_scope(filters)
+      # 会計済みの注文のみを対象とする
       scope = Payment.paid.where.not(paid_at: nil)
                      .joins(:orders)
                      .where(orders: { status: Order.statuses[:closed] })
                      .distinct
 
       unless filters[:all_dates]
+        # 日付フィルタの適用
         if filters[:from].present?
           scope = scope.where("paid_at >= ?", filters[:from].beginning_of_day)
         end
@@ -75,6 +80,7 @@ module Admin
     end
 
     def apply_sort(scope, filters)
+      # ソートオプションの適用
       case filters[:sort]
       when "amount"
         scope.order(amount: filters[:dir])
@@ -88,6 +94,7 @@ module Admin
     end
 
     def table_number_order(direction)
+      # テーブル番号でのソート条件を生成
       if direction == "asc"
         Arel.sql("MIN(tables.number) ASC")
       else
@@ -96,6 +103,7 @@ module Admin
     end
 
     def group_stats(scope, group_sql)
+      # 指定されたグループ化条件で売上と件数を集計
       {
         sales: scope.group(Arel.sql(group_sql)).sum(:amount),
         count: scope.group(Arel.sql(group_sql)).count
@@ -103,6 +111,7 @@ module Admin
     end
 
     def parse_date(value)
+      # 文字列を日付に変換、無効な場合はnilを返す
       return nil if value.blank?
       Date.parse(value)
     rescue ArgumentError

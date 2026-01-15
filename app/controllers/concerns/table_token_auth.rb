@@ -2,6 +2,7 @@ module TableTokenAuth
   extend ActiveSupport::Concern
 
   included do
+    # テーブルのトークン認証を共通化
     before_action :set_current_table
     helper_method :current_table
   end
@@ -9,8 +10,9 @@ module TableTokenAuth
   private
 
   def set_current_table
-    token = params[:token].to_s
-    @current_table = Table.find_by(token: token)
+    # URL パラメータからトークンを取得してテーブルを特定
+    table_token = params[:token].to_s
+    @current_table = Table.find_by(token: table_token)
     return render(status: :not_found, plain: "テーブルが見つかりません") if @current_table.nil?
 
     if AppSetting.instance.token_expiry_enabled? &&
@@ -27,6 +29,7 @@ module TableTokenAuth
   end
 
   def current_table
+    # 現在のテーブルを返す
     @current_table
   end
 end

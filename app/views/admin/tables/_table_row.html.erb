@@ -31,7 +31,7 @@
         <div class="surface"><%= I18n.t("enums.table.access_mode.#{settings.global_access_mode}") %></div>
       <% else %>
         <div class="list-inline">
-          <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] }, {}, {} %>
+          <%= f.select :access_mode, Table.access_modes.keys.map { |mode_key| [I18n.t("enums.table.access_mode.#{mode_key}"), mode_key] }, {}, {} %>
         </div>
       <% end %>
       <label class="list-inline" style="align-items:center;">

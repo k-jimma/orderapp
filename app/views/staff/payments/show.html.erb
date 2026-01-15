@@ -35,8 +35,8 @@
 
     <h3 class="section-title">対象注文</h3>
     <ul class="stack-sm" style="padding-left:16px;">
-      <% @payment.orders.each do |o| %>
-        <li>注文<%= o.id %> (テーブル<%= o.table.number %>)</li>
+      <% @payment.orders.each do |order| %>
+        <li>注文<%= order.id %> (テーブル<%= order.table.number %>)</li>
       <% end %>
     </ul>
 

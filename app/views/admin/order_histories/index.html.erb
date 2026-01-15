@@ -17,6 +17,7 @@
 
       <div class="stack-sm">
         <label>テーブル番号で絞り込み</label>
+        <!-- テーブル絞り込み -->
         <% all_selected = @filters[:table_ids].empty? || @filters[:table_ids].size == @tables.size %>
         <label class="list-inline" style="align-items:center;">
           <input type="checkbox" data-table-filter-all <%= all_selected ? "checked" : "" %>>
@@ -52,8 +53,8 @@
         </div>
       </div>
 
-      <div class="footer-actions">
-        <button type="submit" class="btn btn-primary">絞り込む</button>
+      <div class="list-inline" style="align-items:center;">
+        <button type="submit" class="btn btn-primary" style="padding: 12px 16px;">絞り込む</button>
         <%= link_to "クリア", admin_order_histories_path(all_dates: 1), class: "btn btn-ghost" %>
       </div>
     <% end %>
@@ -88,7 +89,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @daily_stats[:sales].sort_by { |k, _| k }.reverse_each do |day, amount| %>
+        <% @daily_stats[:sales].sort_by { |group_key, _| group_key }.reverse_each do |day, amount| %>
           <tr>
             <td><%= day.to_date.to_fs(:ymd) %></td>
             <td><%= number_to_currency(amount, unit: "¥", precision: 0, format: "%u%n") %></td>
@@ -110,7 +111,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @monthly_stats[:sales].sort_by { |k, _| k }.reverse_each do |month, amount| %>
+        <% @monthly_stats[:sales].sort_by { |group_key, _| group_key }.reverse_each do |month, amount| %>
           <tr>
             <td><%= month.to_date.to_fs(:ym) %></td>
             <td><%= number_to_currency(amount, unit: "¥", precision: 0, format: "%u%n") %></td>
@@ -132,7 +133,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @yearly_stats[:sales].sort_by { |k, _| k }.reverse_each do |year, amount| %>
+        <% @yearly_stats[:sales].sort_by { |group_key, _| group_key }.reverse_each do |year, amount| %>
           <tr>
             <td><%= year.to_date.to_fs(:y) %></td>
             <td><%= number_to_currency(amount, unit: "¥", precision: 0, format: "%u%n") %></td>
@@ -159,7 +160,7 @@
           <tr id="<%= dom_id(payment) %>">
             <td><%= payment.paid_at&.to_fs(:ymd_hms) %></td>
             <td>
-              <% table_numbers = payment.orders.map { |o| o.table.number }.uniq.sort %>
+              <% table_numbers = payment.orders.map { |order| order.table.number }.uniq.sort %>
               <%= table_numbers.map { |n| "テーブル #{n}" }.join(", ") %>
             </td>
             <td><%= number_to_currency(payment.amount, unit: "¥", precision: 0, format: "%u%n") %></td>

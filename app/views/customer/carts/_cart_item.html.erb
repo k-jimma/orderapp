@@ -1,37 +1,37 @@
-<div id="cart_item_<%= ci["item_id"] %>" class="card stack-sm" style="padding: 14px;">
+<div id="cart_item_<%= cart_item["item_id"] %>" class="card stack-sm" style="padding: 14px;">
   <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
     <div>
       <div style="font-weight:600;"><%= item&.name || "商品" %></div>
-      <div class="muted"><%= ci["note"].presence || "メモなし" %></div>
+      <div class="muted"><%= cart_item["note"].presence || "メモなし" %></div>
     </div>
   </div>
 
   <%= form_with url: update_item_table_cart_path(token: table.token, staff: staff), method: :patch do |f| %>
-    <%= hidden_field_tag :item_id, ci["item_id"] %>
-    <%= hidden_field_tag :quantity, ci["qty"] %>
+    <%= hidden_field_tag :item_id, cart_item["item_id"] %>
+    <%= hidden_field_tag :quantity, cart_item["qty"] %>
 
     <div class="qty-stepper">
       <%= link_to "−",
             update_item_table_cart_path(
               token: table.token,
               staff: staff,
-              item_id: ci["item_id"],
-              quantity: ci["qty"].to_i - 1,
-              note: ci["note"]
+              item_id: cart_item["item_id"],
+              quantity: cart_item["qty"].to_i - 1,
+              note: cart_item["note"]
             ),
             data: { turbo_method: :patch },
             class: "qty-btn",
             aria: { label: "数量を減らす" } %>
 
-      <span class="qty-value"><%= ci["qty"] %></span>
+      <span class="qty-value"><%= cart_item["qty"] %></span>
 
       <%= link_to "＋",
             update_item_table_cart_path(
               token: table.token,
               staff: staff,
-              item_id: ci["item_id"],
-              quantity: ci["qty"].to_i + 1,
-              note: ci["note"]
+              item_id: cart_item["item_id"],
+              quantity: cart_item["qty"].to_i + 1,
+              note: cart_item["note"]
             ),
             data: { turbo_method: :patch },
             class: "qty-btn",
@@ -40,14 +40,14 @@
 
     <div class="stack-sm">
       <%= label_tag :note, "メモ" %>
-      <%= text_field_tag :note, ci["note"] %>
+      <%= text_field_tag :note, cart_item["note"] %>
     </div>
 
     <div class="footer-actions">
       <%= f.submit "更新", class: "btn btn-ghost" %>
 
       <%= link_to "削除",
-            remove_item_table_cart_path(token: table.token, staff: staff, item_id: ci["item_id"]),
+            remove_item_table_cart_path(token: table.token, staff: staff, item_id: cart_item["item_id"]),
             data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
             class: "btn btn-ghost" %>
     </div>

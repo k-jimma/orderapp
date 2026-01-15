@@ -1,6 +1,7 @@
 <div class="app-shell stack-md">
   <div class="surface list-inline">
     <strong>ステータス:</strong>
+    <!-- 一覧の絞り込み -->
     <%= link_to "全て", staff_orders_path, class: "btn btn-ghost" %>
     <%= link_to I18n.t("enums.order.status.open"), staff_orders_path(status: :open), class: "btn btn-ghost" %>
     <%= link_to I18n.t("enums.order.status.billing"), staff_orders_path(status: :billing), class: "btn btn-ghost" %>
@@ -20,6 +21,7 @@
         </tr>
       </thead>
       <tbody>
+        <!-- 注文一覧 -->
         <% @orders.each do |order| %>
           <tr>
             <td><%= order.id %></td>

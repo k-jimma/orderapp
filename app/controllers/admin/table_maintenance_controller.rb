@@ -6,10 +6,12 @@ require "zip"
 module Admin
   class TableMaintenanceController < BaseController
     def index
+      # テーブル一覧の取得
       @tables = Table.order(:number)
     end
 
     def update_number
+      # テーブル番号の更新
       table = Table.find(params[:id])
       table.update!(table_number_params)
       flash.now[:notice] = "テーブル番号を更新しました"
@@ -33,6 +35,7 @@ module Admin
     end
 
     def rotate_token
+      # テーブルトークンの再生成
       table = Table.find(params[:id])
       ensure_table_safe_for_admin_change!(table)
       table.rotate_token!
@@ -57,6 +60,7 @@ module Admin
     end
 
     def destroy
+      # テーブルの削除
       table = Table.find(params[:id])
       ensure_table_safe_for_admin_change!(table)
       table.destroy!
@@ -79,12 +83,14 @@ module Admin
     end
 
     def qr
+      # 個別にQRを作成して返す
       table = Table.find(params[:id])
-      png = qr_png_for(table)
-      send_qr_data(png, "テーブル#{table.number}_tableQR.png")
+      qr_png = qr_png_for(table)
+      send_qr_data(qr_png, "テーブル#{table.number}_tableQR.png")
     end
 
     def qr_bulk
+      # まとめてQRを作成してzipで返す
       pngs = Table.order(:number).map do |table|
         [ table, qr_png_for(table) ]
       end
@@ -106,10 +112,12 @@ module Admin
     private
 
     def table_number_params
+      # テーブル番号更新用パラメータの許可
       params.require(:table).permit(:number)
     end
 
     def ensure_table_safe_for_admin_change!(table)
+      # 営業中や未会計がある場合は変更禁止
       raise "操作するには先に無効化してください" if table.active?
       if table.orders.where(status: [ :open, :billing ]).exists?
         raise "未会計の注文があるため操作できません"
@@ -117,6 +125,7 @@ module Admin
     end
 
     def qr_png_for(table)
+      # テーブル用QRコードPNGデータの生成
       url = table_items_url(token: table.token, host: request.base_url)
       RQRCode::QRCode.new(url).as_png(
         size: 300,
@@ -127,6 +136,7 @@ module Admin
     end
 
     def send_qr_data(png, filename)
+      # QRコードPNGデータの送信
       disposition = params[:download].present? ? "attachment" : "inline"
       send_data png,
         type: "image/png",

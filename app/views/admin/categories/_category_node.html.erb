@@ -8,6 +8,6 @@
     <%= button_to "削除", admin_category_path(category), method: :delete, data: { confirm: "削除しますか？" }, class: "btn btn-primary" %>
   </div>
 </div>
-<% category.children.order(:sort_order, :name).each do |child| %>
-  <%= render partial: "category_node", locals: { category: child, level: level + 1 } %>
+<% category.children.order(:sort_order, :name).each do |child_category| %>
+  <%= render partial: "category_node", locals: { category: child_category, level: level + 1 } %>
 <% end %>

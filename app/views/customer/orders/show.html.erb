@@ -23,12 +23,13 @@
         </tr>
       </thead>
       <tbody>
-        <% @order_items.each do |oi| %>
+        <!-- 注文明細一覧 -->
+        <% @order_items.each do |order_item| %>
           <tr>
-            <td><%= oi.item.name %></td>
-            <td><%= oi.quantity %></td>
-            <td><%= number_to_currency(oi.unit_price, unit: "¥", precision: 0, format: "%u%n") %></td>
-            <td><span class="pill status-<%= oi.status %>"><%= I18n.t("enums.order_item.status.#{oi.status}") %></span></td>
+            <td><%= order_item.item.name %></td>
+            <td><%= order_item.quantity %></td>
+            <td><%= number_to_currency(order_item.unit_price, unit: "¥", precision: 0, format: "%u%n") %></td>
+            <td><span class="pill status-<%= order_item.status %>"><%= I18n.t("enums.order_item.status.#{order_item.status}") %></span></td>
           </tr>
         <% end %>
       </tbody>
@@ -42,14 +43,14 @@
       <div class="grid grid-2">
         <div>
           <%= label_tag "call[kind]", "種別" %>
-          <%= select_tag "call[kind]", options_for_select(Call.kinds.keys.map { |k| [I18n.t("enums.call.kind.#{k}"), k] }) %>
+          <%= select_tag "call[kind]", options_for_select(Call.kinds.keys.map { |kind_key| [I18n.t("enums.call.kind.#{kind_key}"), kind_key] }) %>
         </div>
         <div>
           <%= label_tag "call[message]", "メッセージ (任意)" %>
           <%= text_field_tag "call[message]", nil, placeholder: "会計お願いします 等" %>
         </div>
       </div>
-      <div class="footer-actions">
+      <div class="list-inline">
         <%= f.submit "送信", class: "btn btn-primary" %>
       </div>
     <% end %>

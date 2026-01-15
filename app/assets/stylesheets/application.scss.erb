@@ -15,8 +15,11 @@
   --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.2);
   --space: 16px;
   --footer-actions-height: 88px;
+  --category-drawer-width: 150px;
+  --mobile-topbar-height: 72px;
 }
 
+/* --- base reset --- */
 *,
 *::before,
 *::after {
@@ -46,6 +49,7 @@ a:hover:not(.btn) {
   color: var(--color-primary-strong);
 }
 
+/* --- layout --- */
 .app-shell {
   max-width: 1100px;
   margin: 0 auto;
@@ -134,6 +138,7 @@ a:hover:not(.btn) {
   margin-bottom: 16px;
 }
 
+/* --- navigation --- */
 .topbar {
   position: sticky;
   top: 0;
@@ -306,6 +311,7 @@ a:hover:not(.btn) {
   gap: 10px;
 }
 
+/* --- utilities --- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -327,6 +333,7 @@ a:hover:not(.btn) {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
+/* --- menu --- */
 .menu-grid {
   align-items: start;
   grid-template-columns: 1.5fr 2.5fr;
@@ -344,13 +351,34 @@ a:hover:not(.btn) {
   height: 0;
 }
 
+.menu-category.card {
+  padding: 6px;
+  background: var(--color-card);
+}
+
+.menu-category .stack-sm {
+  gap: 6px;
+}
+
+.category-drawer-tab,
+.category-drawer-backdrop {
+  display: none;
+}
+
 .category-root {
   border-color: rgba(94, 234, 212, 0.2);
+  width: 100%;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .category-root-title {
   font-weight: 600;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 15px;
 }
 
 .category-child-list {
@@ -358,16 +386,19 @@ a:hover:not(.btn) {
 }
 
 .category-child-card {
-  background: rgba(15, 23, 42, 0.35);
-  border: 1px solid var(--color-border);
-  border-radius: calc(var(--radius) - 4px);
-  padding: 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .category-child-button {
   width: 100%;
   justify-content: flex-start;
   padding-left: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
 }
 
 .menu-qty-actions {
@@ -412,6 +443,7 @@ a:hover:not(.btn) {
   justify-content: center;
 }
 
+/* --- spacing helpers --- */
 .section {
   display: grid;
   gap: 10px;
@@ -427,6 +459,7 @@ a:hover:not(.btn) {
   gap: 16px;
 }
 
+/* --- footer --- */
 .footer-actions {
   position: fixed;
   left: 0;
@@ -463,6 +496,7 @@ a:hover:not(.btn) {
   box-shadow: var(--shadow);
 }
 
+/* --- hero block --- */
 .hero {
   padding: 16px 18px;
   background: linear-gradient(135deg, rgba(94, 234, 212, 0.15), rgba(56, 189, 248, 0.15));
@@ -571,12 +605,14 @@ input.btn:active {
   color: var(--color-text);
 }
 
+/* --- active states --- */
 [data-category-active="true"] {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: rgba(94, 234, 212, 0.12);
 }
 
+/* --- table --- */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -604,6 +640,7 @@ table tr:last-child td {
   flex-wrap: wrap;
 }
 
+/* --- form helpers --- */
 .remember-me {
   display: inline-flex;
   align-items: center;
@@ -667,6 +704,7 @@ textarea:focus {
   border-color: var(--color-primary);
 }
 
+/* --- flash --- */
 .flash {
   margin: 12px 0;
   padding: 12px 14px;
@@ -684,6 +722,7 @@ textarea:focus {
   background: linear-gradient(120deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.08));
 }
 
+/* --- status color --- */
 .status-open { color: #f59e0b; }
 .status-billing { color: #38bdf8; }
 .status-closed { color: #22c55e; }
@@ -693,6 +732,7 @@ textarea:focus {
 .status-served { color: #22c55e; }
 .status-canceled { color: #ef4444; }
 
+/* --- quantity stepper --- */
 .qty-stepper {
   display: flex;
   align-items: center;
@@ -737,6 +777,7 @@ textarea:focus {
   border: 1px solid var(--color-border);
 }
 
+/* --- toast --- */
 .toast-stack {
   position: fixed;
   top: 70px;
@@ -785,6 +826,7 @@ textarea:focus {
   box-shadow: var(--shadow);
 }
 
+/* --- table maintenance --- */
 .table-maintenance td {
   position: relative;
 }
@@ -901,6 +943,7 @@ textarea:focus {
   background: rgba(255, 255, 255, 0.03);
 }
 
+/* --- animations --- */
 @keyframes toast-in {
   from {
     opacity: 0;
@@ -916,14 +959,71 @@ textarea:focus {
   margin: 20px 0;
 }
 
+/* --- responsive (<= 720px) --- */
 @media (max-width: 720px) {
   .menu-category {
-    max-height: calc(100vh - 240px - var(--footer-actions-height));
+    max-height: calc(100vh - var(--footer-actions-height) - var(--mobile-topbar-height));
+    width: var(--category-drawer-width);
+    position: fixed;
+    top: var(--mobile-topbar-height);
+    bottom: var(--footer-actions-height);
+    left: 0;
+    z-index: 15;
+    transform: translateX(calc(-1 * var(--category-drawer-width)));
+    transition: transform 200ms ease;
+    padding-top: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #0b1020 !important;
+  }
+
+  body.is-category-drawer-open .menu-category {
+    transform: translateX(0);
+  }
+
+  .category-drawer-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translate(-20%, -50%);
+    width: 40px;
+    height: 140px;
+    padding: 10px 6px;
+    border-radius: 0 18px 18px 0;
+    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--color-text);
+    z-index: 16;
+    font-weight: 600;
+    box-shadow: var(--shadow-soft);
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 0.08em;
+  }
+
+  body.is-category-drawer-open .category-drawer-tab {
+    transform: translate(-100%, -50%);
+  }
+
+  .category-drawer-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.45);
+    z-index: 14;
+  }
+
+  body.is-category-drawer-open .category-drawer-backdrop {
+    display: block;
   }
 
   .menu-grid {
-    grid-template-columns: 1.5fr 2.5fr;
+    grid-template-columns: 1fr;
   }
+
 
   .topbar-inner {
     flex-direction: column;
@@ -937,6 +1037,10 @@ textarea:focus {
 
   .btn {
     width: auto;
+  }
+
+  .category-child-button {
+    width: 100%;
   }
 
   .menu-item {
@@ -960,6 +1064,7 @@ textarea:focus {
   }
 }
 
+/* --- responsive (<= 900px) --- */
 @media (max-width: 900px) {
   .topbar-nav {
     display: none;
@@ -976,6 +1081,7 @@ textarea:focus {
   }
 }
 
+/* --- responsive (<= 800px) --- */
 @media (max-width: 800px) {
   .theme-table .topbar-inner {
     flex-wrap: nowrap;
@@ -1007,6 +1113,7 @@ textarea:focus {
   }
 }
 
+/* --- responsive (<= 1024px) --- */
 @media (max-width: 1024px) {
   .theme-table .nav-links .btn {
     padding: 8px 10px;

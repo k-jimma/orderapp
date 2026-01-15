@@ -4,10 +4,16 @@
     <p class="muted">カテゴリを選ぶと該当メニューが表示されます</p>
   </div>
 
+  <button class="category-drawer-tab" data-category-drawer-toggle aria-expanded="false" aria-controls="category-drawer">
+    カテゴリ
+  </button>
+  <div class="category-drawer-backdrop" data-category-drawer-backdrop hidden></div>
+
   <div class="grid menu-grid">
-    <aside class="card stack-sm menu-category">
+    <aside id="category-drawer" class="card stack-sm menu-category" data-category-drawer aria-hidden="false">
       <h3 class="section-title">カテゴリ</h3>
       <nav class="stack-sm" data-category-list>
+        <!-- 親カテゴリ一覧 -->
         <% @root_categories.each_with_index do |category, index| %>
           <%= render partial: "category_nav", locals: { category: category, active: index.zero? } %>
         <% end %>
@@ -21,6 +27,7 @@
 
           <% if category.items.any? %>
             <div class="stack-md">
+              <!-- 中カテゴリ直下のメニュー -->
               <% category.items.each do |item| %>
                 <div class="surface menu-item">
                   <div class="menu-item-name"><strong><%= item.name %></strong></div>
@@ -56,12 +63,12 @@
             </div>
           <% end %>
 
-          <% category.children.order(:sort_order, :name).each do |child| %>
+          <% category.children.order(:sort_order, :name).each do |child_category| %>
             <div class="card stack-sm">
-              <h4 class="section-title"><%= child.name %></h4>
-              <% if child.items.any? %>
+              <h4 class="section-title"><%= child_category.name %></h4>
+              <% if child_category.items.any? %>
                 <div class="stack-md">
-                  <% child.items.each do |item| %>
+                  <% child_category.items.each do |item| %>
                     <div class="surface menu-item">
                       <div class="menu-item-name"><strong><%= item.name %></strong></div>
                       <div class="menu-item-price muted"><%= number_to_currency(item.price, unit: "¥", precision: 0, format: "%u%n") %></div>

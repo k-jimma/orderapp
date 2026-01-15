@@ -10,23 +10,23 @@ export default class extends Controller {
   }
 
   inc() {
-    const v = this.value() + 1
-    this.setValue(v)
+    const nextValue = this.value() + 1
+    this.setValue(nextValue)
   }
 
   dec() {
-    const v = Math.max(this.minValue, this.value() - 1)
-    this.setValue(v)
+    const nextValue = Math.max(this.minValue, this.value() - 1)
+    this.setValue(nextValue)
   }
 
   value() {
-    const n = parseInt(this.inputTarget.value, 10)
-    return Number.isFinite(n) ? n : this.minValue
+    const parsedValue = parseInt(this.inputTarget.value, 10)
+    return Number.isFinite(parsedValue) ? parsedValue : this.minValue
   }
 
-  setValue(v) {
-    this.inputTarget.value = String(v)
-    this.labelTarget.textContent = String(v)
+  setValue(value) {
+    this.inputTarget.value = String(value)
+    this.labelTarget.textContent = String(value)
   }
 
   syncFromInput() {

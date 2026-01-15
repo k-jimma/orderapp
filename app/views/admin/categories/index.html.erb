@@ -6,6 +6,7 @@
   <div class="card stack-sm">
     <h2 class="section-title">カテゴリ一覧</h2>
     <div class="stack-sm">
+      <!-- 親子構造をツリー表示 -->
       <%= render partial: "category_node", collection: @categories, as: :category, locals: { level: 0 } %>
     </div>
   </div>

@@ -3,6 +3,7 @@ module Customer
     include TableAccessGuard
 
     def create
+      # テーブルからの呼び出しを登録
       Call.create!(
         table: current_table,
         kind: call_params[:kind],
@@ -17,6 +18,7 @@ module Customer
     private
 
     def call_params
+      # Strong Parametersで呼び出しパラメータを許可
       params.require(:call).permit(:kind, :message)
     end
   end

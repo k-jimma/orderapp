@@ -1,5 +1,6 @@
 <%= turbo_frame_tag "flash" do %>
-  <% flash.each do |key, value| %>
-    <div class="flash <%= key %> toast"><%= value %></div>
+  <!-- フラッシュ通知 -->
+  <% flash.each do |flash_type, message| %>
+    <div class="flash <%= flash_type %> toast"><%= message %></div>
   <% end %>
 <% end %>

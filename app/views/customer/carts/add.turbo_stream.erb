@@ -12,16 +12,16 @@
 <% end %>
 
 <%= turbo_stream.replace "menu_qty_#{params[:item_id].to_i}" do %>
-  <% item = Item.find_by(id: params[:item_id].to_i) %>
-  <% if item %>
-    <div id="menu_qty_<%= item.id %>">
+  <% menu_item = Item.find_by(id: params[:item_id].to_i) %>
+  <% if menu_item %>
+    <div id="menu_qty_<%= menu_item.id %>">
       <%= form_with url: add_table_cart_path(token: @table.token, staff: params[:staff]),
                     method: :post,
                     local: false,
                     data: { turbo: true },
                     class: "menu-qty-actions" do %>
 
-        <%= hidden_field_tag :item_id, item.id %>
+        <%= hidden_field_tag :item_id, menu_item.id %>
 
         <div class="qty-stepper" data-controller="qty" data-qty-min-value="1">
           <button type="button" class="qty-btn" data-action="qty#dec" aria-label="数量を減らす">−</button>

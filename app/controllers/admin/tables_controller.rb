@@ -1,18 +1,22 @@
 module Admin
   class TablesController < BaseController
     def index
+      # テーブル一覧と新規作成用オブジェクトの準備
       @tables = Table.order(:number)
       @settings = AppSetting.instance
       @table = Table.new(access_mode: @settings.default_access_mode)
     end
 
     def update
+      # テーブル情報の更新
       settings = AppSetting.instance
       table = Table.find(params[:id])
-      attrs = table_params
-      attrs[:access_mode] = settings.global_access_mode if settings.global_access_mode.present?
-      attrs[:token_expires_at] = nil unless settings.token_expiry_enabled?
-      table.update!(attrs)
+      table_attributes = table_params
+      # 全体設定があればアクセスモードを上書き
+      table_attributes[:access_mode] = settings.global_access_mode if settings.global_access_mode.present?
+      # トークン期限が無効なら強制クリア
+      table_attributes[:token_expires_at] = nil unless settings.token_expiry_enabled?
+      table.update!(table_attributes)
       flash.now[:notice] = "更新しました"
       respond_to do |format|
         format.turbo_stream do
@@ -38,16 +42,17 @@ module Admin
     end
 
     def create
+      # 新規テーブルの作成
       settings = AppSetting.instance
-      attrs = table_params
-      attrs[:access_mode] =
+      table_attributes = table_params
+      table_attributes[:access_mode] =
         if settings.global_access_mode.present?
           settings.global_access_mode
         else
-          attrs[:access_mode].presence || settings.default_access_mode
+          table_attributes[:access_mode].presence || settings.default_access_mode
         end
-      attrs[:token_expires_at] = nil unless settings.token_expiry_enabled?
-      table = Table.new(attrs)
+      table_attributes[:token_expires_at] = nil unless settings.token_expiry_enabled?
+      table = Table.new(table_attributes)
       table.save!
       @tables = Table.order(:number)
       @table = Table.new(access_mode: settings.default_access_mode)
@@ -81,15 +86,17 @@ module Admin
     end
 
     def generate_pin
+      # 個別にPINを生成して表示
       table = Table.find(params[:id])
-      pin = table.generate_pin!
-      redirect_to admin_tables_path, notice: "PINを生成しました(テーブル#{table.number}):#{pin}"
+      generated_pin = table.generate_pin!
+      redirect_to admin_tables_path, notice: "PINを生成しました(テーブル#{table.number}):#{generated_pin}"
     end
 
     def generate_pin_bulk
+      # 全テーブルのPINを一括生成・更新
       pin_value = params[:pin].presence || format("%04d", SecureRandom.random_number(10_000))
-      Table.order(:number).find_each do |t|
-        t.update!(pin: pin_value, pin_rotated_at: Time.current)
+      Table.order(:number).find_each do |table|
+        table.update!(pin: pin_value, pin_rotated_at: Time.current)
       end
       settings = AppSetting.instance
       settings.update!(common_pin: pin_value)
@@ -110,6 +117,7 @@ module Admin
     end
 
     def activate_all
+      # 全テーブルを有効化
       Table.update_all(active: true)
       settings = AppSetting.instance
       @tables = Table.order(:number)
@@ -130,6 +138,7 @@ module Admin
     end
 
     def deactivate_all
+      # 全テーブルを無効化
       Table.update_all(active: false)
       settings = AppSetting.instance
       @tables = Table.order(:number)
@@ -152,6 +161,7 @@ module Admin
     private
 
     def table_params
+      # テーブル作成・更新用パラメータの許可
       params.require(:table).permit(:number, :access_mode, :active, :token_expires_at)
     end
   end

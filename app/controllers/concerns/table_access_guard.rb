@@ -2,12 +2,14 @@ module TableAccessGuard
   extend ActiveSupport::Concern
 
   included do
+    # PIN 認証が必要な画面でアクセスをブロックする
     before_action :require_table_access!
   end
 
   private
 
   def require_table_access!
+    # オープンアクセス設定の場合はスキップ
     return if AppSetting.instance.open_access_for?(current_table)
     return if table_access_granted?
 
@@ -15,13 +17,14 @@ module TableAccessGuard
   end
 
   def table_access_granted?
-    stored = session.dig(:table_access, current_table.id.to_s)
-    return false if stored.blank?
+    # セッションに保存されたアクセス情報を確認
+    stored_access = session.dig(:table_access, current_table.id.to_s)
+    return false if stored_access.blank?
 
     granted_at =
-      case stored
+      case stored_access
       when Hash
-        stored["pin_rotated_at"] || stored[:pin_rotated_at]
+        stored_access["pin_rotated_at"] || stored_access[:pin_rotated_at]
       else
         nil
       end
@@ -33,6 +36,7 @@ module TableAccessGuard
   end
 
   def grant_table_access!
+    # セッションにアクセス情報を保存
     session[:table_access] ||= {}
     session[:table_access][current_table.id.to_s] = {
       pin_rotated_at: (current_table.pin_rotated_at&.to_i || 0)
@@ -40,6 +44,7 @@ module TableAccessGuard
   end
 
   def revoke_table_access!
+    # セッションからアクセス情報を削除
     session[:table_access] ||= {}
     session[:table_access].delete(current_table.id.to_s)
   end

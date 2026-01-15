@@ -7,12 +7,12 @@
   <% end %>
 <% else %>
   <% if still_exists %>
-    <% ci = @cart_items.find { |x| x["item_id"].to_i == item_id } %>
+    <% cart_item = @cart_items.find { |entry| entry["item_id"].to_i == item_id } %>
     <%= turbo_stream.replace "cart_item_#{item_id}" do %>
       <%= render "customer/carts/cart_item",
             table: @table,
             staff: params[:staff],
-            ci: ci,
+            cart_item: cart_item,
             item: @items_by_id[item_id] %>
     <% end %>
   <% else %>

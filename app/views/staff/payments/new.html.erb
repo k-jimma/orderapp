@@ -5,16 +5,17 @@
       <div class="surface stack-sm">
         <p class="muted">対象注文</p>
         <ul class="stack-sm" style="padding-left: 16px;">
-          <% @orders.each do |o| %>
-          <li>注文<%= o.id %> (Table <%= o.table.number %>) 小計: <%= number_to_currency(o.subtotal, unit: "¥", precision: 0, format: "%u%n") %></li>
+          <% @orders.each do |order| %>
+            <li>注文<%= order.id %> (Table <%= order.table.number %>) 小計: <%= number_to_currency(order.subtotal, unit: "¥", precision: 0, format: "%u%n") %></li>
           <% end %>
         </ul>
       </div>
     <% end %>
 
     <%= form_with url: staff_payments_path, method: :post, local: true, class: "stack-md" do |f| %>
-      <% @orders.each do |o| %>
-        <%= hidden_field_tag "payment[order_ids][]", o.id %>
+      <!-- 複数注文の会計をまとめて送信 -->
+      <% @orders.each do |order| %>
+        <%= hidden_field_tag "payment[order_ids][]", order.id %>
       <% end %>
 
       <div class="grid grid-2">

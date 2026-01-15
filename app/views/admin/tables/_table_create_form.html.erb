@@ -11,7 +11,7 @@
   <% else %>
     <div>
       <%= f.label :access_mode, "アクセス方式" %>
-      <%= f.select :access_mode, Table.access_modes.keys.map { |k| [I18n.t("enums.table.access_mode.#{k}"), k] } %>
+      <%= f.select :access_mode, Table.access_modes.keys.map { |mode_key| [I18n.t("enums.table.access_mode.#{mode_key}"), mode_key] } %>
     </div>
   <% end %>
   <label class="list-inline" style="align-items:center;">
@@ -23,7 +23,7 @@
       <%= f.datetime_field :token_expires_at %>
     </div>
   <% end %>
-  <div class="footer-actions">
+  <div class="list-inline">
     <%= f.submit "作成", class: "btn btn-primary" %>
   </div>
 <% end %>

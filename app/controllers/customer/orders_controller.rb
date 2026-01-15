@@ -3,12 +3,13 @@ module Customer
     include TableAccessGuard
 
     def show
+      # 注文内容表示
       @order = find_or_create_open_order!
       @order_items = @order.order_items.includes(:item).order(:id)
     end
 
-    # カート一括送信
     def create
+      # 注文確定処理
       @order = find_or_create_open_order!
       items_params = params.dig(:order, :order_items) || []
 
@@ -16,12 +17,13 @@ module Customer
         return redirect_to table_items_path(token: current_table.token), alert: "注文が空です"
       end
 
-      items_params.each do |row|
+      # カートから複数商品を一括追加
+      items_params.each do |item_row|
         Orders::AddItem.new(
           order: @order,
-          item_id: row[:item_id] || row["item_id"],
-          quantity: row[:quantity] || row["quantity"],
-          note: row[:note] || row["note"]
+          item_id: item_row[:item_id] || item_row["item_id"],
+          quantity: item_row[:quantity] || item_row["quantity"],
+          note: item_row[:note] || item_row["note"]
         ).call!
       end
 
@@ -33,6 +35,7 @@ module Customer
     end
 
     def complete
+      # 注文完了画面
       @order = current_table.orders.open.first
       redirect_to table_items_path(token: current_table.token), alert: "受付中の注文がありません" unless @order
     end

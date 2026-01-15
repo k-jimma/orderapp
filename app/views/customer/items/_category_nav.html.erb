@@ -1,13 +1,13 @@
 <div class="category-root card stack-sm">
   <div class="category-root-title"><%= category.name %></div>
   <div class="stack-sm category-child-list">
-    <% category.children.order(:sort_order, :name).each_with_index do |child, idx| %>
+    <% category.children.order(:sort_order, :name).each_with_index do |child_category, index| %>
       <div class="category-child-card">
         <button type="button"
           class="btn btn-ghost category-child-button"
-          data-category-button="<%= child.id %>"
-          <%= active && idx.zero? ? 'data-category-active="true"' : '' %>>
-          <%= child.name %>
+          data-category-button="<%= child_category.id %>"
+          <%= active && index.zero? ? 'data-category-active="true"' : '' %>>
+          <%= child_category.name %>
         </button>
       </div>
     <% end %>

@@ -19,16 +19,17 @@
         </tr>
       </thead>
       <tbody>
-        <% @order.order_items.each do |oi| %>
+        <!-- 注文明細とステータス操作 -->
+        <% @order.order_items.each do |order_item| %>
           <tr>
-            <td><%= oi.item.name %></td>
-            <td><%= oi.quantity %></td>
-            <td><span class="pill status-<%= oi.status %>"><%= I18n.t("enums.order_item.status.#{oi.status}") %></span></td>
+            <td><%= order_item.item.name %></td>
+            <td><%= order_item.quantity %></td>
+            <td><span class="pill status-<%= order_item.status %>"><%= I18n.t("enums.order_item.status.#{order_item.status}") %></span></td>
             <td class="list-inline">
-              <%= button_to "調理中", to_cooking_staff_order_order_item_path(@order, oi), method: :patch, class: "btn btn-ghost" %>
-              <%= button_to "提供待ち", to_ready_staff_order_order_item_path(@order, oi), method: :patch, class: "btn btn-ghost" %>
-              <%= button_to "提供済", to_served_staff_order_order_item_path(@order, oi), method: :patch, class: "btn btn-primary" %>
-              <%= button_to "キャンセル", cancel_staff_order_order_item_path(@order, oi), method: :patch, data: { confirm: "キャンセルしますか？" }, class: "btn btn-ghost" %>
+              <%= button_to "調理中", to_cooking_staff_order_order_item_path(@order, order_item), method: :patch, class: "btn btn-ghost" %>
+              <%= button_to "提供待ち", to_ready_staff_order_order_item_path(@order, order_item), method: :patch, class: "btn btn-ghost" %>
+              <%= button_to "提供済", to_served_staff_order_order_item_path(@order, order_item), method: :patch, class: "btn btn-primary" %>
+              <%= button_to "キャンセル", cancel_staff_order_order_item_path(@order, order_item), method: :patch, data: { confirm: "キャンセルしますか？" }, class: "btn btn-ghost" %>
             </td>
           </tr>
         <% end %>
@@ -36,12 +37,15 @@
     </table>
   </div>
 
-  <div class="footer-actions">
+  <div class="card stack-sm">
     <% if @order.open? %>
       <%= button_to "会計開始", start_billing_staff_order_path(@order), method: :post, class: "btn btn-primary" %>
     <% elsif @order.billing? %>
       <%= link_to "会計へ進む", new_staff_payment_path(order_ids: [@order.id]), class: "btn btn-primary" %>
     <% end %>
+  </div>
+
+  <div class="footer-actions">
     <%= link_to "一覧に戻る", staff_orders_path, class: "btn btn-ghost" %>
   </div>
 </div>

@@ -12,18 +12,20 @@
   <body class="theme-staff" data-role="staff">
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand">スタッフコンソール</div>
+        <div class="brand">
+          <%= link_to "スタッフコンソール", staff_root_path, class: "brand-link" %>
+        </div>
         <nav class="topbar-nav">
           <div class="nav-links">
-          <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
-          <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
-          <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
-          <% if current_user&.admin? || current_user&.chief? %>
-            <%= link_to "管理者画面へ", admin_root_path, class: "btn btn-ghost" %>
-          <% else %>
-            <button type="button" class="btn btn-ghost" data-alert="管理者権限が必要です">管理者画面へ</button>
-          <% end %>
-          <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
+            <!-- スタッフ画面の主要導線 -->
+            <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
+            <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
+            <% if current_user&.admin? || current_user&.chief? %>
+              <%= link_to "管理者画面へ", admin_root_path, class: "btn btn-ghost" %>
+            <% else %>
+              <button type="button" class="btn btn-ghost" data-alert="管理者権限が必要です">管理者画面へ</button>
+            <% end %>
+            <%= button_to "ログアウト", destroy_user_session_path, method: :delete, form: { style: "display:inline" }, class: "btn btn-primary" %>
           </div>
         </nav>
         <button type="button" class="nav-toggle" data-nav-toggle aria-controls="nav-drawer" aria-expanded="false">
@@ -35,11 +37,13 @@
     <div class="nav-drawer-backdrop" data-nav-backdrop hidden></div>
     <aside id="nav-drawer" class="nav-drawer" data-nav-drawer aria-hidden="true">
       <div class="nav-drawer-header">
-        <div class="brand">スタッフコンソール</div>
+        <div class="brand">
+          <%= link_to "スタッフコンソール", staff_root_path, class: "brand-link" %>
+        </div>
         <button type="button" class="nav-drawer-close" data-nav-close aria-label="メニューを閉じる">×</button>
       </div>
       <nav class="nav-drawer-links">
-        <%= link_to "ダッシュボード", staff_root_path, class: "btn btn-ghost" %>
+        <!-- モバイル用のナビゲーション -->
         <%= link_to "注文一覧", staff_orders_path, class: "btn btn-ghost" %>
         <%= link_to "呼び出し一覧", staff_calls_path, class: "btn btn-ghost" %>
         <% if current_user&.admin? || current_user&.chief? %>
@@ -62,8 +66,8 @@
         <div class="list-inline" style="margin-top: 8px;">
           <select id="table-switcher" data-table-switcher>
             <option value="">テーブルを選択</option>
-            <% staff_tables.each do |t| %>
-              <option value="<%= t.token %>">テーブル <%= t.number %></option>
+            <% staff_tables.each do |table| %>
+              <option value="<%= table.token %>">テーブル <%= table.number %></option>
             <% end %>
           </select>
           <button type="button" class="btn btn-ghost" data-table-switcher-button>移動</button>

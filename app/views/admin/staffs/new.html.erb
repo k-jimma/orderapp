@@ -36,6 +36,7 @@
       </div>
 
       <div class="surface" data-password-rules style="display:none;">
+        <!-- パスワードの要件をクライアント側で表示 -->
         <div class="stack-sm">
           <div><span data-rule="len">❌</span> 12文字以上</div>
           <div><span data-rule="lower">❌</span> 英小文字を含む</div>
@@ -56,7 +57,7 @@
         <span class="muted" data-password-hint style="align-self:center;"></span>
       </div>
 
-      <div class="footer-actions">
+      <div class="list-inline">
         <%= f.submit "作成", class: "btn btn-primary" %>
         <%= link_to "戻る", admin_staffs_path, class: "btn btn-ghost" %>
       </div>

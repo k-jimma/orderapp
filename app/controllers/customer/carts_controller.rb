@@ -3,20 +3,22 @@ module Customer
     before_action :ensure_cart_table_scope!
 
     def show
+      # カート表示
       load_cart_view!
     end
 
     def add
+      # カートに追加
       item_id = params.require(:item_id).to_i
-      qty = params[:quantity].presence&.to_i || 1
+      quantity = params[:quantity].presence&.to_i || 1
       note = params[:note].to_s
 
-      entry = cart_items.find { |x| x["item_id"] == item_id }
-      if entry
-        entry["qty"] += qty
-        entry["note"] = note if note.present?
+      existing_entry = cart_items.find { |cart_item| cart_item["item_id"] == item_id }
+      if existing_entry
+        existing_entry["qty"] += quantity
+        existing_entry["note"] = note if note.present?
       else
-        cart_items << { "item_id" => item_id, "qty" => qty, "note" => note }
+        cart_items << { "item_id" => item_id, "qty" => quantity, "note" => note }
       end
 
       save_cart!
@@ -29,11 +31,12 @@ module Customer
     end
 
     def update_item
+      # カート内商品の数量・メモ更新
       item_id = params.require(:item_id).to_i
       note = params[:note].to_s
 
-      entry = cart_items.find { |x| x["item_id"] == item_id }
-      unless entry
+      existing_entry = cart_items.find { |cart_item| cart_item["item_id"] == item_id }
+      unless existing_entry
         respond_to do |format|
           format.turbo_stream do
             flash.now[:alert] = "対象の商品が見つかりません"
@@ -44,18 +47,18 @@ module Customer
         return
       end
 
-      qty =
+      quantity =
         if params.key?(:quantity) && params[:quantity].present?
           params[:quantity].to_i
         else
-          entry["qty"].to_i
+          existing_entry["qty"].to_i
         end
 
-      if qty <= 0
-        cart_items.delete(entry)
+      if quantity <= 0
+        cart_items.delete(existing_entry)
       else
-        entry["qty"] = qty
-        entry["note"] = note
+        existing_entry["qty"] = quantity
+        existing_entry["note"] = note
       end
 
       save_cart!
@@ -70,8 +73,9 @@ module Customer
     end
 
     def remove_item
+      # カート内商品の削除
       item_id = params.require(:item_id).to_i
-      cart_items.reject! { |x| x["item_id"] == item_id }
+      cart_items.reject! { |cart_item| cart_item["item_id"] == item_id }
       save_cart!
       load_cart_view!
 
@@ -84,6 +88,7 @@ module Customer
     end
 
     def clear
+      # カート全削除
       session.delete(:cart)
       load_cart_view!
 
@@ -96,26 +101,27 @@ module Customer
     end
 
     def checkout
+      # 注文確定処理
       if billing_in_progress?(@table)
         render "customer/shared/table_billing", status: :locked
         return
       end
 
       @order = find_or_create_open_order!
-      items = cart_items.dup
+      cart_item_rows = cart_items.dup
 
-      if items.empty?
+      if cart_item_rows.empty?
         redirect_to table_cart_path(token: @table.token, staff: params[:staff]), alert: "カートが空です"
         return
       end
 
       ActiveRecord::Base.transaction do
-        items.each do |x|
+        cart_item_rows.each do |cart_item|
           Orders::AddItem.new(
             order: @order,
-            item_id: x["item_id"],
-            quantity: x["qty"],
-            note: x["note"]
+            item_id: cart_item["item_id"],
+            quantity: cart_item["qty"],
+            note: cart_item["note"]
           ).call!
         end
       end
@@ -129,28 +135,32 @@ module Customer
     private
 
     def ensure_cart_table_scope!
-      c = session[:cart]
-      return if c.blank?
+      # カートのテーブルスコープを確認・修正
+      cart_session = session[:cart]
+      return if cart_session.blank?
 
-      if c["table_token"].present? && c["table_token"] != @table.token
+      if cart_session["table_token"].present? && cart_session["table_token"] != @table.token
         session.delete(:cart)
       end
     end
 
     def cart_items
+      # セッション内のカート構造を正規化
       session[:cart] ||= { "table_token" => @table.token, "items" => [] }
       session[:cart]["items"] ||= []
       session[:cart]["items"]
     end
 
     def save_cart!
+      # セッションにカート情報を保存
       session[:cart]["table_token"] = @table.token
       session[:cart]["items"] = cart_items
     end
 
     def load_cart_view!
+      # カート表示用データの読み込み
       @cart_items = cart_items
-      @items_by_id = Item.where(id: @cart_items.map { |x| x["item_id"] }).index_by(&:id)
+      @items_by_id = Item.where(id: @cart_items.map { |cart_item| cart_item["item_id"] }).index_by(&:id)
       @total_price = @cart_items.sum do |ci|
         item = @items_by_id[ci["item_id"]]
         next 0 unless item

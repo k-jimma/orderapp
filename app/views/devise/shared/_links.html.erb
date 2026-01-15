@@ -1,5 +1,6 @@
 <%- if devise_mapping.recoverable? && controller_name != "passwords" %>
   <div class="stack-sm">
+    <!-- 利用案内・パスワード再発行 -->
     <%= link_to "新規追加", user_request_access_path, class: "btn btn-ghost" %>
     <%= link_to "パスワードをお忘れですか？", new_password_path(resource_name) %>
   </div>

@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_noindex_headers
+    # 検索エンジンにインデックスさせないようにする
     response.set_header("X-Robots-Tag", "noindex, nofollow, noarchive")
   end
 end

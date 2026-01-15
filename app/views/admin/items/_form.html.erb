@@ -23,6 +23,7 @@
       <%= f.collection_select :category_id, categories, :id, :name %>
     </div>
     <label class="list-inline" style="align-items:center;">
+      <!-- 販売可否の切り替え -->
       <%= f.check_box :is_available %>
       <span>販売中</span>
     </label>

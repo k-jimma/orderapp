@@ -1,6 +1,7 @@
 # Additional translations at https://github.com/heartcombo/devise/wiki/I18n
 
 en:
+  # Devise messages
   devise:
     confirmations:
       confirmed: "Your email address has been successfully confirmed."
@@ -54,6 +55,7 @@ en:
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
       unlocked: "Your account has been unlocked successfully. Please sign in to continue."
   errors:
+    # ActiveModel error messages
     messages:
       already_confirmed: "was already confirmed, please try signing in"
       confirmation_period_expired: "needs to be confirmed within %{period}, please request a new one"

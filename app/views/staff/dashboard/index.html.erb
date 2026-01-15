@@ -3,13 +3,13 @@
     <section class="card stack-sm">
       <h2 class="section-title">オープン注文</h2>
       <div class="stack-sm">
-        <% @open_orders.each do |o| %>
+        <% @open_orders.each do |order| %>
           <div class="surface" style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <div>テーブル<%= o.table.number %></div>
-              <div class="muted">更新: <%= l(o.updated_at, format: :short) %></div>
+              <div>テーブル<%= order.table.number %></div>
+              <div class="muted">更新: <%= l(order.updated_at, format: :short) %></div>
             </div>
-            <%= link_to "詳細", staff_order_path(o), class: "btn btn-primary" %>
+            <%= link_to "詳細", staff_order_path(order), class: "btn btn-primary" %>
           </div>
         <% end %>
       </div>
@@ -18,13 +18,13 @@
     <section class="card stack-sm">
       <h2 class="section-title">会計中</h2>
       <div class="stack-sm">
-        <% @billing_orders.each do |o| %>
+        <% @billing_orders.each do |order| %>
           <div class="surface" style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <div>テーブル<%= o.table.number %></div>
-              <div class="muted">更新: <%= l(o.updated_at, format: :short) %></div>
+              <div>テーブル<%= order.table.number %></div>
+              <div class="muted">更新: <%= l(order.updated_at, format: :short) %></div>
             </div>
-            <%= link_to "会計", new_staff_payment_path(order_ids: [o.id]), class: "btn btn-primary" %>
+            <%= link_to "会計", new_staff_payment_path(order_ids: [order.id]), class: "btn btn-primary" %>
           </div>
         <% end %>
       </div>

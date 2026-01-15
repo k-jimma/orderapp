@@ -10,11 +10,11 @@
         </tr>
       </thead>
       <tbody>
-        <% @order_items.each do |oi| %>
+        <% @order_items.each do |order_item| %>
           <tr>
-            <td><%= oi.item.name %></td>
-            <td><%= oi.quantity %></td>
-            <td><span class="pill status-<%= oi.status %>"><%= I18n.t("enums.order_item.status.#{oi.status}") %></span></td>
+            <td><%= order_item.item.name %></td>
+            <td><%= order_item.quantity %></td>
+            <td><span class="pill status-<%= order_item.status %>"><%= I18n.t("enums.order_item.status.#{order_item.status}") %></span></td>
           </tr>
         <% end %>
       </tbody>

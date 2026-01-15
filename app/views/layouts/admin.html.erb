@@ -17,6 +17,7 @@
         </div>
         <nav class="topbar-nav">
           <div class="nav-links">
+            <!-- 管理画面の主要導線 -->
             <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>
             <%= link_to "カテゴリ", admin_categories_path, class: "btn btn-ghost" %>
             <%= link_to "テーブル", admin_tables_path, class: "btn btn-ghost" %>
@@ -42,6 +43,7 @@
         <button type="button" class="nav-drawer-close" data-nav-close aria-label="メニューを閉じる">×</button>
       </div>
       <nav class="nav-drawer-links">
+        <!-- モバイル用のナビゲーション -->
         <%= link_to "商品", admin_items_path, class: "btn btn-ghost" %>
         <%= link_to "カテゴリ", admin_categories_path, class: "btn btn-ghost" %>
         <%= link_to "テーブル", admin_tables_path, class: "btn btn-ghost" %>

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  # Customer table flows (public table token)
   scope "t/:token", as: :table, module: :customer do
     resource :access, only: [ :new, :create, :destroy ], controller: :accesses
     resources :items, only: [ :index ]
@@ -23,6 +24,7 @@ Rails.application.routes.draw do
     end
   end
 
+  # Staff console
   namespace :staff do
     get "/" => "dashboard#index", as: :root
 
@@ -45,6 +47,7 @@ Rails.application.routes.draw do
     resources :calls, only: [ :index, :update ]
   end
 
+  # Admin console
   namespace :admin do
     get "/" => "dashboard#index", as: :root
 
@@ -74,6 +77,7 @@ Rails.application.routes.draw do
     resources :staffs, only: [ :index, :new, :create, :destroy ]
   end
 
+  # Auth (Devise)
   devise_for :users, skip: [ :registrations ], controllers: {
     sessions: "users/sessions",
     passwords: "users/passwords"
@@ -84,11 +88,14 @@ Rails.application.routes.draw do
     post "users/guest_admin_sign_in", to: "users/sessions#guest_admin", as: :guest_admin_user_session
   end
 
+  # Portfolio QR
   get "portfolio/tables/:id/qr", to: "portfolio_tables#qr", as: :portfolio_table_qr
 
+  # Health / PWA
   get "up" => "rails/health#show", as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
+  # Default
   root "staff/dashboard#index"
 end

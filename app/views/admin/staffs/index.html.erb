@@ -18,24 +18,25 @@
         </tr>
       </thead>
       <tbody>
-        <% @staffs.each do |u| %>
+        <% @staffs.each do |staff| %>
           <tr>
-            <td><%= u.id %></td>
-            <td><%= u.name %></td>
-            <td><%= u.email %></td>
+            <td><%= staff.id %></td>
+            <td><%= staff.name %></td>
+            <td><%= staff.email %></td>
             <td>
-              <% if u.initial_password_visible? %>
-                <code><%= u.initial_password_plaintext %></code>
-              <% elsif u.initial_password_present? %>
+              <!-- 初期パスワードの表示期間はモデルで制御 -->
+              <% if staff.initial_password_visible? %>
+                <code><%= staff.initial_password_plaintext %></code>
+              <% elsif staff.initial_password_present? %>
                 <span class="badge badge-warning">期限切れ</span>
               <% else %>
                 <span class="badge">変更済み</span>
               <% end %>
             </td>
-            <td><%= u.created_at.to_fs(:ymd_hm) %></td>
+            <td><%= staff.created_at.to_fs(:ymd_hm) %></td>
             <td class="list-inline">
               <%= button_to "削除",
-                    admin_staff_path(u),
+                    admin_staff_path(staff),
                     method: :delete,
                     data: { confirm: "削除しますか？" },
                     class: "btn btn-ghost" %>

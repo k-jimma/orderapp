@@ -7,12 +7,13 @@
         <%= render "customer/carts/empty", table: @table, staff: params[:staff] %>
       <% else %>
         <div class="stack-md">
-          <% @cart_items.each do |ci| %>
+          <!-- カート内の商品一覧 -->
+          <% @cart_items.each do |cart_item| %>
             <%= render "customer/carts/cart_item",
                   table: @table,
                   staff: params[:staff],
-                  ci: ci,
-                  item: @items_by_id[ci["item_id"]] %>
+                  cart_item: cart_item,
+                  item: @items_by_id[cart_item["item_id"]] %>
           <% end %>
         </div>
 
@@ -20,12 +21,14 @@
           <%= render "customer/carts/total", total_price: @total_price %>
         </div>
 
-        <div class="footer-actions">
-          <%= link_to "メニューへ戻る", table_items_path(token: @table.token, staff: params[:staff]), class: "btn btn-ghost" %>
+        <div class="list-inline">
           <%= button_to "カートを空にする", clear_table_cart_path(token: @table.token, staff: params[:staff]),
                 method: :delete, class: "btn btn-ghost" %>
           <%= button_to "注文を確定する", checkout_table_cart_path(token: @table.token, staff: params[:staff]),
                 method: :post, class: "btn btn-primary" %>
+        </div>
+        <div class="footer-actions">
+          <%= link_to "メニューへ戻る", table_items_path(token: @table.token, staff: params[:staff]), class: "btn btn-ghost" %>
         </div>
       <% end %>
     </div>

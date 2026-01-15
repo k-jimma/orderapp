@@ -8,12 +8,14 @@ module Admin
     private
 
     def require_admin!
+      # admin または chief のみ管理画面にアクセス可
       return if current_user&.admin? || current_user&.chief?
 
       redirect_to root_path, alert: "管理者権限が必要です"
     end
 
     def require_chief!
+      # chief のみ管理画面にアクセス可
       return if current_user&.chief?
 
       redirect_to admin_root_path, alert: "最高責任者権限が必要です"

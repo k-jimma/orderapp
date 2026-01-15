@@ -2,18 +2,18 @@ import "@hotwired/turbo-rails"
 import "controllers"
 
 // --------------------
-// Flash auto-dismiss
+// フラッシュ自動消去
 // --------------------
 function autoDismissFlashes(root = document) {
-  root.querySelectorAll(".flash").forEach((el) => {
-    if (el.dataset.autoDismissed) return
-    el.dataset.autoDismissed = "true"
+  root.querySelectorAll(".flash").forEach((flashEl) => {
+    if (flashEl.dataset.autoDismissed) return
+    flashEl.dataset.autoDismissed = "true"
 
     setTimeout(() => {
-      el.style.transition = "opacity 300ms ease, transform 300ms ease"
-      el.style.opacity = "0"
-      el.style.transform = "translateY(-6px)"
-      setTimeout(() => el.remove(), 320)
+      flashEl.style.transition = "opacity 300ms ease, transform 300ms ease"
+      flashEl.style.opacity = "0"
+      flashEl.style.transform = "translateY(-6px)"
+      setTimeout(() => flashEl.remove(), 320)
     }, 3200)
   })
 }
@@ -24,24 +24,24 @@ document.addEventListener("turbo:load", () => {
   autoDismissFlashes()
 
   // data-alert
-  document.querySelectorAll("[data-alert]").forEach((el) => {
+  document.querySelectorAll("[data-alert]").forEach((alertElement) => {
     // 重複バインド防止
-    if (el.dataset.alertBound) return
-    el.dataset.alertBound = "true"
+    if (alertElement.dataset.alertBound) return
+    alertElement.dataset.alertBound = "true"
 
-    el.addEventListener("click", () => {
-      const message = el.getAttribute("data-alert")
+    alertElement.addEventListener("click", () => {
+      const message = alertElement.getAttribute("data-alert")
       if (message) alert(message)
     })
   })
 
   // Staff table switcher
-  const switcher = document.querySelector("[data-table-switcher]")
-  const switcherButton = document.querySelector("[data-table-switcher-button]")
+  const tableSwitcherSelect = document.querySelector("[data-table-switcher]")
+  const tableSwitcherButton = document.querySelector("[data-table-switcher-button]")
 
-  const goToTable = () => {
-    if (!switcher) return
-    const token = switcher.value
+  const navigateToTable = () => {
+    if (!tableSwitcherSelect) return
+    const token = tableSwitcherSelect.value
     if (!token) return
 
     const isStaff = document.body?.dataset?.role === "staff"
@@ -49,77 +49,138 @@ document.addEventListener("turbo:load", () => {
     window.location.href = `/t/${token}/items${qs}`
   }
 
-  if (switcher && !switcher.dataset.bound) {
-    switcher.dataset.bound = "true"
-    switcher.addEventListener("change", goToTable)
+  if (tableSwitcherSelect && !tableSwitcherSelect.dataset.bound) {
+    tableSwitcherSelect.dataset.bound = "true"
+    tableSwitcherSelect.addEventListener("change", navigateToTable)
   }
-  if (switcherButton && !switcherButton.dataset.bound) {
-    switcherButton.dataset.bound = "true"
-    switcherButton.addEventListener("click", goToTable)
+  if (tableSwitcherButton && !tableSwitcherButton.dataset.bound) {
+    tableSwitcherButton.dataset.bound = "true"
+    tableSwitcherButton.addEventListener("click", navigateToTable)
   }
 
   // Customer category tabs
-  const categoryButtons = document.querySelectorAll("[data-category-button]")
+  const categoryTabButtons = document.querySelectorAll("[data-category-button]")
   const categoryPanels = document.querySelectorAll("[data-category-panel]")
+  let closeCategoryDrawerFn = null
 
-  if (categoryButtons.length > 0 && categoryPanels.length > 0) {
+  // Customer category drawer (mobile)
+  const categoryDrawerToggleButton = document.querySelector("[data-category-drawer-toggle]")
+  const categoryDrawer = document.querySelector("[data-category-drawer]")
+  const categoryDrawerBackdrop = document.querySelector("[data-category-drawer-backdrop]")
+
+  if (categoryDrawerToggleButton && categoryDrawer && categoryDrawerBackdrop && !categoryDrawerToggleButton.dataset.bound) {
+    categoryDrawerToggleButton.dataset.bound = "true"
+
+    const openDrawer = () => {
+      document.body.classList.add("is-category-drawer-open")
+      categoryDrawerBackdrop.hidden = false
+      categoryDrawer.setAttribute("aria-hidden", "false")
+      categoryDrawerToggleButton.setAttribute("aria-expanded", "true")
+    }
+
+    const closeDrawer = () => {
+      document.body.classList.remove("is-category-drawer-open")
+      categoryDrawerBackdrop.hidden = true
+      categoryDrawer.setAttribute("aria-hidden", "true")
+      categoryDrawerToggleButton.setAttribute("aria-expanded", "false")
+    }
+
+    closeCategoryDrawerFn = closeDrawer
+
+    categoryDrawerToggleButton.addEventListener("click", () => {
+      if (document.body.classList.contains("is-category-drawer-open")) {
+        closeDrawer()
+      } else {
+        openDrawer()
+      }
+    })
+
+    categoryDrawerBackdrop.addEventListener("click", closeDrawer)
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.body.classList.contains("is-category-drawer-open")) {
+        closeDrawer()
+      }
+    })
+
+    if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
+      closeDrawer()
+    }
+  }
+
+  const fitCategoryText = (selector, baseFontSize, longFontSize, extraLongFontSize) => {
+    document.querySelectorAll(selector).forEach((labelEl) => {
+      const text = labelEl.textContent?.trim() || ""
+      const textLength = Array.from(text).length
+      let fontSize = baseFontSize
+      if (textLength >= 12) fontSize = longFontSize
+      if (textLength >= 16) fontSize = extraLongFontSize
+      labelEl.style.fontSize = `${fontSize}px`
+    })
+  }
+
+  fitCategoryText(".category-root-title", 15, 13, 12)
+  fitCategoryText(".category-child-button", 14, 12, 11)
+
+  if (categoryTabButtons.length > 0 && categoryPanels.length > 0) {
     const showCategory = (categoryId) => {
       categoryPanels.forEach((panel) => {
         panel.style.display = panel.dataset.categoryPanel === categoryId ? "" : "none"
       })
-      categoryButtons.forEach((btn) => {
-        btn.toggleAttribute("data-category-active", btn.dataset.categoryButton === categoryId)
+      categoryTabButtons.forEach((button) => {
+        button.toggleAttribute("data-category-active", button.dataset.categoryButton === categoryId)
       })
     }
 
-    categoryButtons.forEach((btn, index) => {
-      if (btn.dataset.bound) return
-      btn.dataset.bound = "true"
+    categoryTabButtons.forEach((button, index) => {
+      if (button.dataset.bound) return
+      button.dataset.bound = "true"
 
-      btn.addEventListener("click", () => {
-        showCategory(btn.dataset.categoryButton)
+      button.addEventListener("click", () => {
+        showCategory(button.dataset.categoryButton)
+        closeCategoryDrawerFn?.()
         window.scrollTo({ top: 0, behavior: "smooth" })
       })
-      if (index === 0) showCategory(btn.dataset.categoryButton)
+      if (index === 0) showCategory(button.dataset.categoryButton)
     })
   }
 
   // Admin order history table filters
-  const tableFilterAll = document.querySelector("[data-table-filter-all]")
-  const tableFilterItems = document.querySelectorAll("[data-table-filter-item]")
+  const tableFilterAllCheckbox = document.querySelector("[data-table-filter-all]")
+  const tableFilterItemCheckboxes = document.querySelectorAll("[data-table-filter-item]")
 
-  if (tableFilterAll && tableFilterItems.length > 0 && !tableFilterAll.dataset.bound) {
-    tableFilterAll.dataset.bound = "true"
-    tableFilterAll.addEventListener("change", () => {
-      tableFilterItems.forEach((el) => {
-        el.checked = tableFilterAll.checked
+  if (tableFilterAllCheckbox && tableFilterItemCheckboxes.length > 0 && !tableFilterAllCheckbox.dataset.bound) {
+    tableFilterAllCheckbox.dataset.bound = "true"
+    tableFilterAllCheckbox.addEventListener("change", () => {
+      tableFilterItemCheckboxes.forEach((checkbox) => {
+        checkbox.checked = tableFilterAllCheckbox.checked
       })
     })
 
-    tableFilterItems.forEach((el) => {
-      if (el.dataset.bound) return
-      el.dataset.bound = "true"
-      el.addEventListener("change", () => {
-        const allChecked = Array.from(tableFilterItems).every((item) => item.checked)
-        tableFilterAll.checked = allChecked
+    tableFilterItemCheckboxes.forEach((checkbox) => {
+      if (checkbox.dataset.bound) return
+      checkbox.dataset.bound = "true"
+      checkbox.addEventListener("change", () => {
+        const allChecked = Array.from(tableFilterItemCheckboxes).every((item) => item.checked)
+        tableFilterAllCheckbox.checked = allChecked
       })
     })
   }
 
   // Mobile nav drawer (admin/staff)
-  const navToggle = document.querySelector("[data-nav-toggle]")
+  const navToggleButton = document.querySelector("[data-nav-toggle]")
   const navDrawer = document.querySelector("[data-nav-drawer]")
   const navBackdrop = document.querySelector("[data-nav-backdrop]")
   const navClose = document.querySelector("[data-nav-close]")
 
-  if (navToggle && navDrawer && navBackdrop && !navToggle.dataset.bound) {
-    navToggle.dataset.bound = "true"
+  if (navToggleButton && navDrawer && navBackdrop && !navToggleButton.dataset.bound) {
+    navToggleButton.dataset.bound = "true"
 
     const openDrawer = () => {
       navDrawer.classList.add("is-open")
       navBackdrop.hidden = false
       navDrawer.setAttribute("aria-hidden", "false")
-      navToggle.setAttribute("aria-expanded", "true")
+      navToggleButton.setAttribute("aria-expanded", "true")
       document.body.style.overflow = "hidden"
     }
 
@@ -127,11 +188,11 @@ document.addEventListener("turbo:load", () => {
       navDrawer.classList.remove("is-open")
       navBackdrop.hidden = true
       navDrawer.setAttribute("aria-hidden", "true")
-      navToggle.setAttribute("aria-expanded", "false")
+      navToggleButton.setAttribute("aria-expanded", "false")
       document.body.style.overflow = ""
     }
 
-    navToggle.addEventListener("click", () => {
+    navToggleButton.addEventListener("click", () => {
       if (navDrawer.classList.contains("is-open")) {
         closeDrawer()
       } else {
@@ -150,15 +211,15 @@ document.addEventListener("turbo:load", () => {
   }
 
   // ---- Admin Staff password helper ----
-  const pw = document.getElementById("staff-password")
-  const pwc = document.getElementById("staff-password-confirm")
-  const box = document.querySelector("[data-password-rules]")
-  const btnGen = document.querySelector("[data-generate-password]")
-  const btnCopy = document.querySelector("[data-copy-password]")
-  const hint = document.querySelector("[data-password-hint]")
+  const passwordInput = document.getElementById("staff-password")
+  const passwordConfirmInput = document.getElementById("staff-password-confirm")
+  const rulesBox = document.querySelector("[data-password-rules]")
+  const generateButton = document.querySelector("[data-generate-password]")
+  const copyButton = document.querySelector("[data-copy-password]")
+  const hintText = document.querySelector("[data-password-hint]")
 
   // ここは return しない。無いなら「この機能だけ」何もしない
-  if (!pw || !pwc) return
+  if (!passwordInput || !passwordConfirmInput) return
 
   const generatePassword = (len = 14) => {
     const lower = "abcdefghijklmnopqrstuvwxyz"
@@ -188,83 +249,84 @@ document.addEventListener("turbo:load", () => {
   })
 
   const renderRules = () => {
-    if (!box) return
-    box.style.display = ""
-    const rules = checkRules(pw.value, pwc.value)
+    if (!rulesBox) return
+    rulesBox.style.display = ""
+    const rules = checkRules(passwordInput.value, passwordConfirmInput.value)
     Object.entries(rules).forEach(([k, ok]) => {
-      const el = box.querySelector(`[data-rule="${k}"]`)
-      if (!el) return
-      el.textContent = ok ? "✅" : "❌"
+      const ruleEl = rulesBox.querySelector(`[data-rule="${k}"]`)
+      if (!ruleEl) return
+      ruleEl.textContent = ok ? "✅" : "❌"
     })
   }
 
-  if (!pw.dataset.bound) {
-    pw.dataset.bound = "true"
-    pw.addEventListener("input", renderRules)
+  if (!passwordInput.dataset.bound) {
+    passwordInput.dataset.bound = "true"
+    passwordInput.addEventListener("input", renderRules)
   }
-  if (!pwc.dataset.bound) {
-    pwc.dataset.bound = "true"
-    pwc.addEventListener("input", renderRules)
+  if (!passwordConfirmInput.dataset.bound) {
+    passwordConfirmInput.dataset.bound = "true"
+    passwordConfirmInput.addEventListener("input", renderRules)
   }
   renderRules()
 
-  if (btnGen && !btnGen.dataset.bound) {
-    btnGen.dataset.bound = "true"
-    btnGen.addEventListener("click", () => {
+  if (generateButton && !generateButton.dataset.bound) {
+    generateButton.dataset.bound = "true"
+    generateButton.addEventListener("click", () => {
       const v = generatePassword(14)
-      pw.value = v
-      pwc.value = v
+      passwordInput.value = v
+      passwordConfirmInput.value = v
       renderRules()
-      if (hint) hint.textContent = "生成しました"
+      if (hintText) hintText.textContent = "生成しました"
     })
   }
 
-  if (btnCopy && !btnCopy.dataset.bound) {
-    btnCopy.dataset.bound = "true"
-    btnCopy.addEventListener("click", async () => {
-      if (!pw.value) return
+  if (copyButton && !copyButton.dataset.bound) {
+    copyButton.dataset.bound = "true"
+    copyButton.addEventListener("click", async () => {
+      if (!passwordInput.value) return
       try {
-        await navigator.clipboard.writeText(pw.value)
-        if (hint) hint.textContent = "コピーしました"
+        await navigator.clipboard.writeText(passwordInput.value)
+        if (hintText) hintText.textContent = "コピーしました"
       } catch {
-        if (hint) hint.textContent = "コピーできませんでした"
+        if (hintText) hintText.textContent = "コピーできませんでした"
       }
     })
   }
 })
 
+// Turboのconfirmをカスタムモーダルに差し替え
 function setupConfirmModal() {
   if (!window.Turbo) return
 
   const modal = document.getElementById("confirm-modal")
-  const message = document.getElementById("confirm-modal-message")
-  const ok = modal?.querySelector("[data-confirm-ok]")
-  const cancels = modal?.querySelectorAll("[data-confirm-cancel]") || []
+  const messageElement = document.getElementById("confirm-modal-message")
+  const confirmOkButton = modal?.querySelector("[data-confirm-ok]")
+  const cancelButtons = modal?.querySelectorAll("[data-confirm-cancel]") || []
 
-  if (!modal || !message || !ok) {
+  if (!modal || !messageElement || !confirmOkButton) {
     window.__confirmModalOpen = (text) => Promise.resolve(window.confirm(text))
     return
   }
 
   window.__confirmModalOpen = (text) =>
     new Promise((resolve) => {
-      message.textContent = text
+      messageElement.textContent = text
       modal.hidden = false
       modal.setAttribute("aria-hidden", "false")
 
       const close = (result) => {
         modal.hidden = true
         modal.setAttribute("aria-hidden", "true")
-        ok.removeEventListener("click", onOk)
-        cancels.forEach((el) => el.removeEventListener("click", onCancel))
+        confirmOkButton.removeEventListener("click", onOk)
+        cancelButtons.forEach((el) => el.removeEventListener("click", onCancel))
         resolve(result)
       }
 
       const onOk = () => close(true)
       const onCancel = () => close(false)
 
-      ok.addEventListener("click", onOk)
-      cancels.forEach((el) => el.addEventListener("click", onCancel))
+      confirmOkButton.addEventListener("click", onOk)
+      cancelButtons.forEach((el) => el.addEventListener("click", onCancel))
     })
 
   window.Turbo.setConfirmMethod((text) => window.__confirmModalOpen(text))
@@ -275,40 +337,40 @@ function setupConfirmModal() {
   document.addEventListener(
     "click",
     (event) => {
-      const confirmEl = event.target?.closest?.("[data-turbo-confirm],[data-confirm]")
-      if (!confirmEl) return
-      if (confirmEl.dataset.confirmed === "true") return
+      const confirmElement = event.target?.closest?.("[data-turbo-confirm],[data-confirm]")
+      if (!confirmElement) return
+      if (confirmElement.dataset.confirmed === "true") return
 
       event.preventDefault()
       const text =
-        confirmEl.getAttribute("data-turbo-confirm") ||
-        confirmEl.getAttribute("data-confirm") ||
+        confirmElement.getAttribute("data-turbo-confirm") ||
+        confirmElement.getAttribute("data-confirm") ||
         "確認しますか？"
 
-      const form = confirmEl.closest("form") || (confirmEl.tagName === "FORM" ? confirmEl : null)
+      const form = confirmElement.closest("form") || (confirmElement.tagName === "FORM" ? confirmElement : null)
       const submitter = event.target?.closest?.("button, input[type=\"submit\"]")
 
       window.__confirmModalOpen(text).then((ok) => {
         if (!ok) return
-        confirmEl.dataset.confirmed = "true"
+        confirmElement.dataset.confirmed = "true"
         if (submitter) submitter.dataset.confirmed = "true"
 
-        if (confirmEl.dataset.qrGenerate) {
-          const targetId = confirmEl.getAttribute("data-qr-target")
-          const url = confirmEl.getAttribute("data-qr-url")
+        if (confirmElement.dataset.qrGenerate) {
+          const targetId = confirmElement.getAttribute("data-qr-target")
+          const url = confirmElement.getAttribute("data-qr-url")
           const img = targetId ? document.getElementById(targetId) : null
           if (img && url) {
             const cacheBust = `ts=${Date.now()}`
             const next = url.includes("?") ? `${url}&${cacheBust}` : `${url}?${cacheBust}`
             img.setAttribute("src", next)
           }
-          delete confirmEl.dataset.confirmed
+          delete confirmElement.dataset.confirmed
           if (submitter) delete submitter.dataset.confirmed
           return
         }
 
-        const confirmEls = [confirmEl, submitter].filter(Boolean)
-        const removed = confirmEls.map((el) => ({
+        const confirmElements = [confirmElement, submitter].filter(Boolean)
+        const removed = confirmElements.map((el) => ({
           el,
           turbo: el.getAttribute("data-turbo-confirm"),
           confirm: el.getAttribute("data-confirm"),
@@ -323,7 +385,7 @@ function setupConfirmModal() {
         } else if (form) {
           form.submit()
         } else {
-          confirmEl.click()
+          confirmElement.click()
         }
 
         removed.forEach(({ el, turbo, confirm }) => {
@@ -332,7 +394,7 @@ function setupConfirmModal() {
         })
 
         setTimeout(() => {
-          delete confirmEl.dataset.confirmed
+          delete confirmElement.dataset.confirmed
           if (submitter) delete submitter.dataset.confirmed
         }, 0)
       })
@@ -359,6 +421,7 @@ document.addEventListener("turbo:before-stream-render", (event) => {
   }
 })
 
+// 画面遷移前にスクロール位置を保存
 function saveScrollForNextLoad(targetId = null) {
   try {
     sessionStorage.setItem("restoreScrollY", String(window.scrollY || 0))
@@ -366,6 +429,7 @@ function saveScrollForNextLoad(targetId = null) {
   } catch {}
 }
 
+// Turbo遷移後にスクロール位置を復元
 function restoreScrollIfNeeded() {
   try {
     const y = sessionStorage.getItem("restoreScrollY")

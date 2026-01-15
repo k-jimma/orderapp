@@ -28,4 +28,5 @@
 #       enabled: "ON"
 
 en:
+  # Application texts
   hello: "Hello world"

@@ -38,6 +38,7 @@
   </td>
   <td>
     <div class="table-maintenance-actions">
+      <!-- 安全確認のため確認ダイアログを表示 -->
       <%= button_to "トークン再生成",
             rotate_token_admin_table_maintenance_path(table),
             method: :patch,

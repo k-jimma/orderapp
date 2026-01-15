@@ -4,6 +4,7 @@
     <p class="muted">テーブル番号の変更、トークン再生成、削除ができます。</p>
     <p class="muted">削除は「無効化済み」かつ「未会計の注文が無い」場合のみ可能です。</p>
     <div class="footer-actions">
+      <!-- QR一括保存は別ページ遷移で実行 -->
       <%= link_to "QR一括保存",
             qr_bulk_admin_table_maintenance_index_path,
             class: "btn btn-ghost",
