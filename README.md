@@ -23,6 +23,7 @@
 
 ## スクリーンショット
 
+![サインイン画面](sspng/sign_in.png)
 ![注文画面（客側）](sspng/order_table.png)
 ![スタッフ画面](sspng/staff_console.png)
 ![管理者画面](sspng/admin_console.png)
