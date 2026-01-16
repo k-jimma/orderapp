@@ -75,6 +75,7 @@ document.addEventListener("turbo:load", () => {
       document.body.classList.add("is-category-drawer-open")
       categoryDrawerBackdrop.hidden = false
       categoryDrawer.setAttribute("aria-hidden", "false")
+      categoryDrawer.removeAttribute("inert")
       categoryDrawerToggleButton.setAttribute("aria-expanded", "true")
     }
 
@@ -82,7 +83,11 @@ document.addEventListener("turbo:load", () => {
       document.body.classList.remove("is-category-drawer-open")
       categoryDrawerBackdrop.hidden = true
       categoryDrawer.setAttribute("aria-hidden", "true")
+      categoryDrawer.setAttribute("inert", "")
       categoryDrawerToggleButton.setAttribute("aria-expanded", "false")
+      if (document.activeElement && categoryDrawer.contains(document.activeElement)) {
+        categoryDrawerToggleButton.focus()
+      }
     }
 
     closeCategoryDrawerFn = closeDrawer
@@ -329,7 +334,7 @@ function setupConfirmModal() {
       cancelButtons.forEach((el) => el.addEventListener("click", onCancel))
     })
 
-  window.Turbo.setConfirmMethod((text) => window.__confirmModalOpen(text))
+  window.Turbo.config.forms.confirm = (text) => window.__confirmModalOpen(text)
 
   if (window.__confirmModalClickBound) return
   window.__confirmModalClickBound = true
