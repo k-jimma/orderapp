@@ -35,16 +35,18 @@
 
       <% if AppSetting.instance.guest_logins_enabled? %>
         <div class="guest-login-actions">
-          <%= button_to "ゲストログイン（スタッフ権限）",
-                guest_user_session_path,
+          <%= button_to guest_user_session_path,
                 method: :post,
-                class: "btn btn-ghost",
-                form: { data: { turbo: false } } %>
-          <%= button_to "ゲストログイン（管理者権限）",
-                guest_admin_user_session_path,
+                class: "btn btn-ghost guest-login-button",
+                form: { data: { turbo: false } } do %>
+            <span class="guest-login-label">ゲストログイン（スタッフ権限）</span>
+          <% end %>
+          <%= button_to guest_admin_user_session_path,
                 method: :post,
-                class: "btn btn-ghost",
-                form: { data: { turbo: false } } %>
+                class: "btn btn-ghost guest-login-button",
+                form: { data: { turbo: false } } do %>
+            <span class="guest-login-label">ゲストログイン（管理者権限）</span>
+          <% end %>
         </div>
       <% end %>
 

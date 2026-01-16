@@ -1,6 +1,9 @@
 // Design tokens
 :root {
   --font-base: "Inter", "Noto Sans JP", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --font-body: clamp(1rem, calc(0.95rem + 0.25vw), 1.125rem);
+  --font-caption: clamp(0.875rem, calc(0.84rem + 0.15vw), 1rem);
+  --font-heading: clamp(1.5rem, calc(1.2rem + 1.5vw), 2.5rem);
   --color-bg: #0f172a;
   --color-surface: rgba(255, 255, 255, 0.06);
   --color-card: rgba(255, 255, 255, 0.08);
@@ -19,6 +22,10 @@
   --mobile-topbar-height: 72px;
 }
 
+html {
+  font-size: 100%;
+}
+
 /* --- base reset --- */
 *,
 *::before,
@@ -28,6 +35,7 @@
 
 body {
   font-family: var(--font-base);
+  font-size: var(--font-body);
   margin: 0;
   color: var(--color-text);
   background: radial-gradient(circle at 20% 20%, #1e293b 0%, #0b1020 45%), #0b1020;
@@ -212,7 +220,6 @@ a:hover:not(.btn) {
 
   .nav-links .btn {
     padding: 8px 10px;
-    font-size: 13px;
   }
 }
 
@@ -378,7 +385,7 @@ a:hover:not(.btn) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 15px;
+  font-size: var(--font-caption);
   margin-top: 6px;
   margin-left: 12px;
 }
@@ -403,7 +410,7 @@ a:hover:not(.btn) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+  font-size: var(--font-caption);
 }
 
 .menu-qty-actions {
@@ -514,7 +521,7 @@ a:hover:not(.btn) {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 18px;
+  font-size: var(--font-body);
   margin: 12px;
 }
 
@@ -526,7 +533,7 @@ a:hover:not(.btn) {
   background: var(--color-surface);
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  font-size: 12px;
+  font-size: var(--font-caption);
   letter-spacing: 0.01em;
 }
 
@@ -541,7 +548,7 @@ a:hover:not(.btn) {
   border-radius: 999px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  font-size: 12px;
+  font-size: var(--font-caption);
 }
 
 /* --- buttons (a/button/input 全部を統一) --- */
@@ -557,6 +564,7 @@ a:hover:not(.btn) {
   color: var(--color-text);
   cursor: pointer;
   font-weight: 600;
+  font-size: var(--font-caption);
   text-decoration: none; /* a.btn対策 */
   transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
@@ -674,11 +682,23 @@ table tr:last-child td {
 
 .guest-login-actions form {
   margin: 0;
+  min-width: 0;
 }
 
 .guest-login-actions .btn {
   width: 100%;
   justify-content: center;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.guest-login-actions .guest-login-label {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 form {
@@ -688,7 +708,7 @@ form {
 
 label {
   color: var(--color-muted);
-  font-size: 14px;
+  font-size: var(--font-caption);
 }
 
 input,
@@ -750,7 +770,7 @@ textarea:focus {
   width: 48px;
   height: 36px;
   border-radius: 8px;
-  font-size: 22px;
+  font-size: var(--font-body);
   font-weight: 700;
   line-height: 1;
   display: inline-flex;
@@ -774,7 +794,7 @@ textarea:focus {
 .qty-value {
   min-width: 44px;
   text-align: center;
-  font-size: 18px;
+  font-size: var(--font-body);
   font-weight: 700;
   padding: 6px 10px;
   border-radius: 999px;
@@ -897,7 +917,7 @@ textarea:focus {
 
 .table-qr-cell .btn {
   min-width: 110px;
-  font-size: 14px;
+  font-size: var(--font-body);
   line-height: 1.2;
 }
 
@@ -1104,17 +1124,14 @@ textarea:focus {
 
   .theme-table .nav-links .btn {
     padding: 8px 10px;
-    font-size: 13px;
   }
 
   .theme-table .table-preview-link {
     padding: 6px 8px;
-    font-size: 12px;
   }
 
   .theme-table .table-pill {
     padding: 4px 8px;
-    font-size: 12px;
   }
 }
 
@@ -1122,7 +1139,6 @@ textarea:focus {
 @media (max-width: 1024px) {
   .theme-table .nav-links .btn {
     padding: 8px 10px;
-    font-size: 13px;
   }
 
   .theme-table .nav-links {
@@ -1131,11 +1147,9 @@ textarea:focus {
 
   .theme-table .table-preview-link {
     padding: 6px 8px;
-    font-size: 12px;
   }
 
   .theme-table .table-pill {
     padding: 4px 8px;
-    font-size: 12px;
   }
 }

@@ -108,26 +108,41 @@ document.addEventListener("turbo:load", () => {
       }
     })
 
-    if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
-      closeDrawer()
+  if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
+    closeDrawer()
+  }
+}
+
+const fitTextToWidth = (buttonSelector, labelSelector, minFontSize = 5) => {
+  document.querySelectorAll(buttonSelector).forEach((button) => {
+    const labelEl = button.querySelector(labelSelector)
+    if (!labelEl) return
+
+    const buttonStyle = window.getComputedStyle(button)
+    const paddingX = parseFloat(buttonStyle.paddingLeft) + parseFloat(buttonStyle.paddingRight)
+    const availableWidth = button.clientWidth - paddingX
+    if (availableWidth <= 0) return
+
+    labelEl.style.fontSize = ""
+    const baseFontSize = parseFloat(window.getComputedStyle(labelEl).fontSize)
+    if (labelEl.scrollWidth <= availableWidth) return
+
+    let nextFontSize = baseFontSize
+    while (labelEl.scrollWidth > availableWidth && nextFontSize > minFontSize) {
+      nextFontSize -= 1
+      labelEl.style.fontSize = `${nextFontSize}px`
     }
-  }
+  })
+}
 
-  const fitCategoryText = (selector, baseFontSize, longFontSize, extraLongFontSize) => {
-    document.querySelectorAll(selector).forEach((labelEl) => {
-      const text = labelEl.textContent?.trim() || ""
-      const textLength = Array.from(text).length
-      let fontSize = baseFontSize
-      if (textLength >= 12) fontSize = longFontSize
-      if (textLength >= 16) fontSize = extraLongFontSize
-      labelEl.style.fontSize = `${fontSize}px`
-    })
-  }
+fitTextToWidth(".guest-login-button", ".guest-login-label", 5)
 
-  fitCategoryText(".category-root-title", 15, 13, 12)
-  fitCategoryText(".category-child-button", 14, 12, 11)
+if (!window.__guestLoginFitBound) {
+  window.__guestLoginFitBound = true
+  window.addEventListener("resize", () => fitTextToWidth(".guest-login-button", ".guest-login-label", 5))
+}
 
-  if (categoryTabButtons.length > 0 && categoryPanels.length > 0) {
+if (categoryTabButtons.length > 0 && categoryPanels.length > 0) {
     const showCategory = (categoryId) => {
       categoryPanels.forEach((panel) => {
         panel.style.display = panel.dataset.categoryPanel === categoryId ? "" : "none"
